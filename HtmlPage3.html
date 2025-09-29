@@ -1,0 +1,844 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven Contact Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #0d6efd;
+            --azure-blue: #0078d4;
+            --success-green: #198754;
+            --warning-orange: #ffc107;
+            --danger-red: #dc3545;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+        }
+
+        .agent-card {
+            border-left: 4px solid var(--azure-blue);
+            transition: transform 0.3s ease;
+        }
+
+            .agent-card:hover {
+                transform: translateY(-5px);
+            }
+
+        .workflow-visual {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .kpi-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-positive {
+            background: #d1e7dd;
+            color: var(--success-green);
+        }
+
+        .kpi-negative {
+            background: #f8d7da;
+            color: var(--danger-red);
+        }
+
+        .audit-badge {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+        }
+
+        .sentiment-positive {
+            background: var(--success-green);
+        }
+
+        .sentiment-negative {
+            background: var(--danger-red);
+        }
+
+        .sentiment-neutral {
+            background: var(--warning-orange);
+        }
+
+        .channel-tab {
+            border-bottom: 3px solid transparent;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+            .channel-tab.active {
+                border-bottom-color: var(--azure-blue);
+                color: var(--azure-blue);
+                font-weight: bold;
+            }
+
+        .ai-agent-message {
+            background: #e3f2fd;
+            border-left: 4px solid var(--azure-blue);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .human-agent-message {
+            background: #f5f5f5;
+            border-left: 4px solid #6c757d;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .call-visualization {
+            height: 100px;
+            background: linear-gradient(90deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .waveform {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0,10 C20,5 40,15 60,10 C80,5 100,15 100,10 L100,20 L0,20 Z" fill="%230078d4" opacity="0.3"/></svg>') repeat-x;
+            animation: wave 2s linear infinite;
+        }
+
+        @keyframes wave {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 100px 0;
+            }
+        }
+
+        .dashboard-card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-thin {
+            height: 6px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-robot me-2"></i>
+                AI Contact Center
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#email-resolution">Email</a>
+                <a class="nav-link" href="#voice-support">Voice</a>
+                <a class="nav-link" href="#auditing">Auditing</a>
+                <a class="nav-link" href="#architecture">Architecture</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold">AI-Driven Contact Center</h1>
+                    <p class="lead">Faster Resolutions, Lower Cost, Happier Customers</p>
+                    <p>Omnichannel AI for Contact Centers: Email, Voice & Auditing</p>
+                    <div class="mt-4">
+                        <span class="badge bg-light text-dark me-2"><i class="fas fa-check-circle text-success me-1"></i>Email/Chat Tickets</span>
+                        <span class="badge bg-light text-dark me-2"><i class="fas fa-check-circle text-success me-1"></i>Live Voice Support</span>
+                        <span class="badge bg-light text-dark"><i class="fas fa-check-circle text-success me-1"></i>Automated Auditing</span>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="workflow-visual bg-white text-dark mt-4 mt-lg-0">
+                        <h5><i class="fas fa-brain text-primary me-2"></i>Multi-Agent AI Platform</h5>
+                        <p class="mb-2">Coordinated via AutoGen on Azure Functions</p>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="p-2">
+                                    <i class="fas fa-inbox fa-2x text-primary mb-2"></i>
+                                    <p class="small mb-0">Classification</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-2">
+                                    <i class="fas fa-heart fa-2x text-danger mb-2"></i>
+                                    <p class="small mb-0">Sentiment</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-2">
+                                    <i class="fas fa-file-alt fa-2x text-success mb-2"></i>
+                                    <p class="small mb-0">Summarization</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Benefits -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 dashboard-card">
+                        <div class="card-body">
+                            <i class="fas fa-bolt fa-3x text-warning mb-3"></i>
+                            <h5 class="card-title">Faster Resolution</h5>
+                            <p class="card-text">AI agents handle micro-tasks in parallel, reducing email resolution time by 65%.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 dashboard-card">
+                        <div class="card-body">
+                            <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Higher First-Contact Success</h5>
+                            <p class="card-text">AI-guided responses increase first-contact resolution by 40%.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 dashboard-card">
+                        <div class="card-body">
+                            <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">100% Call Coverage</h5>
+                            <p class="card-text">Every interaction is audited, not just random samples.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Email Ticket Resolution -->
+    <section id="email-resolution" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Email Ticket Resolution</h2>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card dashboard-card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-envelope me-2"></i>Traditional Workflow</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <i class="fas fa-user fa-3x text-muted"></i>
+                                <div class="mt-2">Single Human Bottleneck</div>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><i class="fas fa-clock text-warning me-2"></i>Manual classification</li>
+                                <li class="list-group-item"><i class="fas fa-clock text-warning me-2"></i>Manual sentiment analysis</li>
+                                <li class="list-group-item"><i class="fas fa-clock text-warning me-2"></i>Manual research</li>
+                                <li class="list-group-item"><i class="fas fa-clock text-warning me-2"></i>Manual response drafting</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card dashboard-card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-robot me-2"></i>AI-Driven Multi-Agent Workflow</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center mb-3">
+                                <div class="col-3">
+                                    <i class="fas fa-tag text-primary"></i>
+                                    <div class="small mt-1">Classification Agent</div>
+                                </div>
+                                <div class="col-3">
+                                    <i class="fas fa-heart text-danger"></i>
+                                    <div class="small mt-1">Sentiment Agent</div>
+                                </div>
+                                <div class="col-3">
+                                    <i class="fas fa-file-contract text-success"></i>
+                                    <div class="small mt-1">Summary Agent</div>
+                                </div>
+                                <div class="col-3">
+                                    <i class="fas fa-search text-info"></i>
+                                    <div class="small mt-1">Knowledge Agent</div>
+                                </div>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Parallel micro-task execution</li>
+                                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Ready-made draft to agent</li>
+                                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Consistent quality</li>
+                                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Time saved per email</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Demo -->
+            <div class="card dashboard-card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-laptop-code me-2"></i>Live Email Processing Demo</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Customer Email</h6>
+                            <div class="border p-3 bg-light rounded">
+                                <p><strong>Subject:</strong> Problem with my recent order #78902</p>
+                                <p><strong>From:</strong> customer@example.com</p>
+                                <hr>
+                                <p>Hello, I'm very frustrated with my recent purchase. The product arrived damaged and doesn't work as described. I've been waiting for 5 days for a response to my previous email. This is completely unacceptable service and I need this resolved immediately or I'll have to cancel my order and file a complaint.</p>
+                                <p>Please help me with this situation.</p>
+                            </div>
+                            <button id="processEmail" class="btn btn-primary mt-3">
+                                <i class="fas fa-cogs me-2"></i>Process with AI Agents
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>AI Agent Processing</h6>
+                            <div id="agentProcessing" class="border rounded p-3" style="height: 300px; overflow-y: auto;">
+                                <p class="text-muted text-center mt-5">Click "Process with AI Agents" to see multi-agent workflow in action</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="agentResult" class="mt-4" style="display: none;">
+                        <h6>AI-Generated Response Draft</h6>
+                        <div class="border p-3 bg-success bg-opacity-10 rounded">
+                            <p><strong>Subject:</strong> Re: Problem with my recent order #78902</p>
+                            <p><strong>To:</strong> customer@example.com</p>
+                            <hr>
+                            <p>Dear Customer,</p>
+                            <p>I sincerely apologize for the issues you've experienced with your order and the delay in our response. I understand your frustration and we're committed to resolving this for you immediately.</p>
+                            <p>I've initiated a replacement for your damaged product which will be shipped via express delivery at no additional cost. You should receive tracking information within the next 2 hours.</p>
+                            <p>Additionally, I've applied a 15% discount to your order as compensation for the inconvenience caused.</p>
+                            <p>Please let me know if there's anything else I can assist with.</p>
+                            <p>Sincerely,<br>Customer Support Team</p>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-success me-2"><i class="fas fa-check me-2"></i>Send Response</button>
+                            <button class="btn btn-outline-secondary"><i class="fas fa-edit me-2"></i>Edit Draft</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Voice Support -->
+    <section id="voice-support" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Manual Calls to AI-Driven Voice Support</h2>
+
+            <div class="row mb-5">
+                <div class="col-md-4">
+                    <div class="card text-center h-100 dashboard-card">
+                        <div class="card-body">
+                            <div class="text-muted mb-3">
+                                <i class="fas fa-user-headset fa-3x"></i>
+                            </div>
+                            <h5>Fully Manual</h5>
+                            <p>Relies solely on human skill and knowledge</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center h-100 dashboard-card">
+                        <div class="card-body">
+                            <div class="text-primary mb-3">
+                                <i class="fas fa-user-plus fa-3x"></i>
+                            </div>
+                            <h5>AI-Assisted</h5>
+                            <p>Agent in control with AI accelerating accuracy and compliance</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center h-100 dashboard-card">
+                        <div class="card-body">
+                            <div class="text-success mb-3">
+                                <i class="fas fa-robot fa-3x"></i>
+                            </div>
+                            <h5>Virtual Assistant</h5>
+                            <p>Resolves routine calls autonomously, escalates complex cases</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voice Call Demo -->
+            <div class="card dashboard-card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-phone-alt me-2"></i>Live Voice Support Demo</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="call-visualization mb-3">
+                                <div class="waveform"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <strong>Caller:</strong> John Smith
+                                </div>
+                                <div>
+                                    <span class="badge bg-warning text-dark">04:32</span>
+                                </div>
+                            </div>
+
+                            <div class="conversation-container border rounded p-3 bg-white" style="height: 300px; overflow-y: auto;">
+                                <div class="human-agent-message">
+                                    <strong>Agent:</strong> Thank you for calling support. How can I help you today?
+                                </div>
+                                <div class="ai-agent-message">
+                                    <strong>AI Assistant:</strong> <i class="fas fa-lightbulb text-warning me-1"></i> Customer profile loaded: Premium subscriber, 2 previous support calls
+                                </div>
+                                <div class="human-agent-message">
+                                    <strong>Caller:</strong> Hi, I'm having trouble accessing my account on the mobile app.
+                                </div>
+                                <div class="ai-agent-message">
+                                    <strong>AI Assistant:</strong> <i class="fas fa-lightbulb text-warning me-1"></i> Detected: Account access issue. Suggested solution: Password reset or app reinstall
+                                </div>
+                                <div class="human-agent-message">
+                                    <strong>Agent:</strong> I'm sorry to hear that. Let me help you with that. Have you tried restarting the app?
+                                </div>
+                                <div class="human-agent-message">
+                                    <strong>Caller:</strong> Yes, I've tried that but it's still not working.
+                                </div>
+                                <div class="ai-agent-message">
+                                    <strong>AI Assistant:</strong> <i class="fas fa-lightbulb text-warning me-1"></i> Sentiment trending negative. Recommend: Escalate solution or offer callback
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Type agent response...">
+                                    <button class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>AI Real-Time Assistance</h6>
+                            <div class="ai-assistance-panel border rounded p-3 bg-light" style="height: 450px; overflow-y: auto;">
+                                <div class="mb-3">
+                                    <h6><i class="fas fa-user-circle me-2"></i>Customer Profile</h6>
+                                    <ul class="small">
+                                        <li><strong>Name:</strong> John Smith</li>
+                                        <li><strong>Status:</strong> Premium Subscriber</li>
+                                        <li><strong>Value:</strong> High</li>
+                                        <li><strong>Previous Issues:</strong> 2 (1 billing, 1 technical)</li>
+                                    </ul>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h6><i class="fas fa-heart me-2"></i>Sentiment Analysis</h6>
+                                    <div class="progress progress-thin mb-1">
+                                        <div class="progress-bar bg-danger" style="width: 70%"></div>
+                                    </div>
+                                    <div class="small text-danger">Frustrated</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h6><i class="fas fa-lightbulb me-2"></i>Suggested Solutions</h6>
+                                    <div class="list-group">
+                                        <a href="#" class="list-group-item list-group-item-action small">
+                                            <i class="fas fa-mobile-alt me-2 text-primary"></i>
+                                            Guide through app reinstallation
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action small">
+                                            <i class="fas fa-key me-2 text-primary"></i>
+                                            Perform password reset
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action small">
+                                            <i class="fas fa-sync me-2 text-primary"></i>
+                                            Check server status for outage
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h6><i class="fas fa-shield-alt me-2"></i>Compliance Check</h6>
+                                    <div class="small">
+                                        <span class="badge bg-success me-1">GDPR Compliant</span>
+                                        <span class="badge bg-success">Data Secure</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h6><i class="fas fa-chart-line me-2"></i>Upsell Opportunity</h6>
+                                    <div class="small text-success">
+                                        Customer eligible for premium support package - 15% discount available
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Auditing Dashboard -->
+    <section id="auditing" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">AI-Powered Auditing Dashboard</h2>
+            <p class="text-center mb-4">Multi-Agent Review of Every Call - 100% Coverage</p>
+
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="kpi-card kpi-positive">
+                        <h3>QA Pass Rate <i class="fas fa-arrow-up"></i></h3>
+                        <p class="h4">94%</p>
+                        <small>Every call scored, no random sampling</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="kpi-card kpi-negative">
+                        <h3>Compliance Breaches <i class="fas fa-arrow-down"></i></h3>
+                        <p class="h4">-62%</p>
+                        <small>Instant red-flag alerts</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="kpi-card kpi-positive">
+                        <h3>Coach-prep Time <i class="fas fa-arrow-down"></i></h3>
+                        <p class="h4">-85%</p>
+                        <small>AI pinpoints training gaps in seconds</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="kpi-card kpi-positive">
+                        <h3>Manual QA Cost <i class="fas fa-arrow-down"></i></h3>
+                        <p class="h4">-76%</p>
+                        <small>Supervisors review exceptions, not full calls</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card dashboard-card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Call Auditing Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h6>Recent Calls</h6>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Call ID</th>
+                                            <th>Agent</th>
+                                            <th>Duration</th>
+                                            <th>Sentiment</th>
+                                            <th>Quality Score</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#78901</td>
+                                            <td>Sarah Johnson</td>
+                                            <td>04:32</td>
+                                            <td><span class="badge sentiment-negative text-white">Negative</span></td>
+                                            <td>
+                                                <div class="progress progress-thin">
+                                                    <div class="progress-bar bg-warning" style="width: 65%"></div>
+                                                </div>
+                                                <small>65%</small>
+                                            </td>
+                                            <td><span class="badge bg-warning text-dark">Needs Review</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>#78900</td>
+                                            <td>Mike Chen</td>
+                                            <td>02:15</td>
+                                            <td><span class="badge sentiment-positive text-white">Positive</span></td>
+                                            <td>
+                                                <div class="progress progress-thin">
+                                                    <div class="progress-bar bg-success" style="width: 92%"></div>
+                                                </div>
+                                                <small>92%</small>
+                                            </td>
+                                            <td><span class="badge bg-success">Approved</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>#78899</td>
+                                            <td>Emma Davis</td>
+                                            <td>07:48</td>
+                                            <td><span class="badge sentiment-neutral text-dark">Neutral</span></td>
+                                            <td>
+                                                <div class="progress progress-thin">
+                                                    <div class="progress-bar bg-info" style="width: 88%"></div>
+                                                </div>
+                                                <small>88%</small>
+                                            </td>
+                                            <td><span class="badge bg-success">Approved</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>#78898</td>
+                                            <td>Tom Wilson</td>
+                                            <td>03:21</td>
+                                            <td><span class="badge sentiment-positive text-white">Positive</span></td>
+                                            <td>
+                                                <div class="progress progress-thin">
+                                                    <div class="progress-bar bg-success" style="width: 95%"></div>
+                                                </div>
+                                                <small>95%</small>
+                                            </td>
+                                            <td><span class="badge bg-success">Approved</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>AI Audit Agents</h6>
+                            <div class="list-group">
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Summary Agent</h6>
+                                        <span class="badge bg-success rounded-pill">Active</span>
+                                    </div>
+                                    <p class="mb-1 small">Generates concise call summary</p>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Classification Agent</h6>
+                                        <span class="badge bg-success rounded-pill">Active</span>
+                                    </div>
+                                    <p class="mb-1 small">Categorizes call purpose and outcome</p>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Sentiment Agent</h6>
+                                        <span class="badge bg-success rounded-pill">Active</span>
+                                    </div>
+                                    <p class="mb-1 small">Analyzes customer emotion trends</p>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Quality Agent</h6>
+                                        <span class="badge bg-success rounded-pill">Active</span>
+                                    </div>
+                                    <p class="mb-1 small">Scores agent performance</p>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Compliance Agent</h6>
+                                        <span class="badge bg-success rounded-pill">Active</span>
+                                    </div>
+                                    <p class="mb-1 small">Flags policy violations</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Call Audit -->
+                    <h6>Call #78901 Detailed Audit</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-secondary text-white py-2">
+                                    <h6 class="mb-0">Call Summary</h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="small">Customer called regarding account access issues on mobile app. Agent attempted basic troubleshooting but customer grew frustrated. Issue was escalated to technical team with callback promised within 2 hours.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-secondary text-white py-2">
+                                    <h6 class="mb-0">AI Feedback & Coaching Tips</h6>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="small">
+                                        <li>Could have acknowledged frustration earlier in call</li>
+                                        <li>Missed opportunity to suggest app reinstallation</li>
+                                        <li>Good compliance with data protection policies</li>
+                                        <li>Consider training on de-escalation techniques</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture -->
+    <section id="architecture" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Azure-Native Architecture</h2>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-cloud me-2"></i>Azure Services</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h6>AI & Retrieval</h6>
+                                <span class="badge bg-light text-dark me-1 mb-1">Azure OpenAI</span>
+                                <span class="badge bg-light text-dark me-1 mb-1">Azure AI Search</span>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6>Orchestration</h6>
+                                <span class="badge bg-light text-dark me-1 mb-1">AutoGen</span>
+                                <span class="badge bg-light text-dark me-1 mb-1">Azure Functions</span>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6>Data & Integration</h6>
+                                <span class="badge bg-light text-dark me-1 mb-1">Azure Data Factory</span>
+                                <span class="badge bg-light text-dark me-1 mb-1">Azure SQL</span>
+                                <span class="badge bg-light text-dark me-1 mb-1">Blob Storage</span>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6>Security</h6>
+                                <span class="badge bg-light text-dark me-1 mb-1">Microsoft Entra ID</span>
+                                <span class="badge bg-light text-dark me-1 mb-1">Azure Key Vault</span>
+                                <span class="badge bg-light text-dark me-1 mb-1">Purview</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-rocket me-2"></i>8-Week Delivery Plan</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h6>Weeks 1-2: Foundation</h6>
+                                <p class="small mb-1">Azure setup, security, CI/CD pipelines</p>
+                                <div class="progress progress-thin mb-2">
+                                    <div class="progress-bar" style="width: 100%"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6>Weeks 3-4: Email/Chat AI</h6>
+                                <p class="small mb-1">Multi-agent email processing implementation</p>
+                                <div class="progress progress-thin mb-2">
+                                    <div class="progress-bar" style="width: 100%"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6>Weeks 5-6: Voice AI</h6>
+                                <p class="small mb-1">Real-time call assistance integration</p>
+                                <div class="progress progress-thin mb-2">
+                                    <div class="progress-bar" style="width: 80%"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6>Weeks 7-8: Auditing & Analytics</h6>
+                                <p class="small mb-1">Dashboard and reporting features</p>
+                                <div class="progress progress-thin mb-2">
+                                    <div class="progress-bar" style="width: 60%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-robot me-2"></i>AI-Driven Contact Center</h5>
+                    <p>Powered by Microsoft Azure and AutoGen multi-agent framework</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>Secured on Microsoft Azure · Ready for phased rollout</p>
+                    <p>Faster Resolutions · Lower Cost · Happier Customers</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            // Email processing demo
+            $('#processEmail').click(function() {
+                const processingDiv = $('#agentProcessing');
+                const resultDiv = $('#agentResult');
+
+                processingDiv.html('');
+                resultDiv.hide();
+
+                // Simulate multi-agent processing
+                const agents = [
+                    { name: 'Classification Agent', icon: 'fas fa-tag', task: 'Analyzing email content and categorizing...', delay: 1000 },
+                    { name: 'Sentiment Agent', icon: 'fas fa-heart', task: 'Detecting customer emotion and urgency...', delay: 2000 },
+                    { name: 'Summary Agent', icon: 'fas fa-file-contract', task: 'Creating concise summary of issues...', delay: 3000 },
+                    { name: 'Knowledge Agent', icon: 'fas fa-search', task: 'Researching solutions and policies...', delay: 4000 },
+                    { name: 'Drafting Agent', icon: 'fas fa-edit', task: 'Generating response draft...', delay: 5000 }
+                ];
+
+                agents.forEach(agent => {
+                    setTimeout(() => {
+                        const agentHtml = `
+                            <div class="ai-agent-message mb-2">
+                                <i class="${agent.icon} me-2"></i>
+                                <strong>${agent.name}:</strong> ${agent.task}
+                                <span class="float-end"><i class="fas fa-check-circle text-success"></i></span>
+                            </div>
+                        `;
+                        processingDiv.append(agentHtml);
+                        processingDiv.scrollTop(processingDiv[0].scrollHeight);
+
+                        // Show result after last agent
+                        if (agent === agents[agents.length - 1]) {
+                            setTimeout(() => {
+                                resultDiv.slideDown();
+                            }, 1000);
+                        }
+                    }, agent.delay);
+                });
+            });
+
+            // Smooth scrolling for navigation links
+            $('a.nav-link').on('click', function(e) {
+                e.preventDefault();
+                const target = $($(this).attr('href'));
+                $('html, body').animate({
+                    scrollTop: target.offset().top - 70
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

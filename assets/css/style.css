@@ -1,0 +1,195 @@
+﻿body {
+    /*background-color: #edebe9;*/
+    background-color: #f1f1f1;
+}
+
+.logo-box {
+}
+    .logo-box::before {
+        content: '';
+        background: linear-gradient(rgb(0 0 0 / 45%), rgb(0 0 0 / 95%)), url(../img/bg-1.jpg) no-repeat center bottom / cover;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        right: 0;
+        z-index: -1;
+        width: 25%;
+    }
+.btn-login {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 12px;
+    font-weight: 600;
+}
+
+    .btn-login:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        color: white;
+    }
+.topbar{
+    position:relative;
+}
+    .topbar::before {
+        content: '';
+        background: linear-gradient(rgb(0 0 0 / 45%), rgb(0 0 0 / 95%)), url(../img/bg-1.jpg) no-repeat center bottom / cover;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left:0;
+        right: 0;
+        z-index: -1;
+    }
+.topbar>div>div{
+    height:40px;
+}
+#profileBtn {
+    display: block;
+    width: 30px;
+    height: 30px;
+    background-color: #ffffff52;
+    border-radius: 4px;
+    line-height: 30px;
+    text-align: center;
+    color: #ffffff;
+    font-size: 20px;
+}
+    #profileBtn:hover {
+        background-color: #61a9b18c;
+    }
+    .topDropdowns .dropdown-menu {
+        border: none;
+    }
+
+    .topDropdowns .dropdown-menu li {
+        border-bottom: 1px solid #bebebe;
+    }
+
+        .topDropdowns .dropdown-menu li:last-child {
+            border-bottom: none;
+        }
+
+        .topDropdowns .dropdown-menu li a {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 17px;
+            display: flex;
+            align-items: center;
+        }
+
+            .topDropdowns .dropdown-menu li a img {
+                height: 23px;
+                margin-right: 7px;
+            }
+
+            .topDropdowns .dropdown-menu li a:hover {
+                color: #141414;
+                background-color: #dddddd;
+            }
+.wrapper-page{
+
+}
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    transition: all 0.3s;
+    border-right: 1px solid #d1d1d1;
+}
+
+    #sidebar .nav-link {
+        padding: 12px 20px;
+        display: flex;
+        align-items:center;
+        color: #303030;
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+        #sidebar .nav-link > img {
+            height: 24px;
+        }
+        #sidebar .nav-link >span{
+            margin-left:6px;
+        }
+        #sidebar .nav-link:hover {
+            background: #d2dce7;
+        }
+        #sidebar .nav-link.active {
+            background: #bdc8d5;
+        }
+        /* Submenu */
+        #sidebar .submenu .nav-link {
+            padding-left: 40px;
+            font-size: 14px;
+        }
+
+    /* Collapsed sidebar */
+    #sidebar.collapsed {
+        margin-left: -250px;
+    }
+
+/* Content */
+#content {
+    flex: 1;
+    height: calc(100vh - 40px);
+    transition: all 0.3s;
+    overflow-y:auto;
+}
+    /*#content > div {
+        padding: 20px;
+    }*/
+
+/* Works in Chrome, Edge, Safari */
+::-webkit-scrollbar {
+    width: 8px; /* Slim width */
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Track color */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888; /* Thumb color */
+    border-radius: 10px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555; /* Hover color */
+    }
+
+/* Firefox support */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+.kpi-1 {
+    background: linear-gradient(45deg, #3498db, #2c3e50);
+}
+
+.kpi-2 {
+    background: linear-gradient(45deg, #2ecc71, #27ae60);
+}
+
+.kpi-3 {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+}
+
+.kpi-4 {
+    background: linear-gradient(45deg, #f39c12, #d35400);
+}
+.agent-avatar {
+    display: block;
+    width: 40px;
+    height: 40px;
+    background-color: gainsboro;
+    border-radius: 6px;
+    line-height: 40px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+    margin-right: 8px;
+}

@@ -1,0 +1,520 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Multi-Agent Contact Center (Client-side Demo)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Basic layout */
+        body, html {
+            height: 100%;
+        }
+
+        .app {
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 280px 1fr 420px;
+            gap: 0;
+        }
+
+        .left, .center, .right {
+            overflow: auto;
+            padding: 16px;
+        }
+
+        .left {
+            background: #f8f9fa;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .center {
+            background: #fff;
+        }
+
+        .right {
+            background: #f7f7fb;
+            border-left: 1px solid #e9ecef;
+        }
+
+        .ticket {
+            cursor: pointer;
+        }
+
+            .ticket.unread {
+                background: #eef6ff;
+            }
+
+        .agent-badge {
+            font-size: .72rem;
+        }
+
+        .transcript {
+            font-family: Menlo, Monaco, monospace;
+            white-space: pre-wrap;
+        }
+
+        /* small helpers */
+        .muted-small {
+            font-size: .8rem;
+            color: #6c757d;
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #e9ecef;
+            font-size: .8rem;
+        }
+
+        /* auditing table */
+        .audit-card {
+            max-height: 320px;
+            overflow: auto;
+        }
+
+        /* responsiveness */
+        @media (max-width: 1000px) {
+            .app {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto
+            }
+
+            .left, .right {
+                height: 250px
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- LEFT: channels / tickets -->
+        <div class="left">
+            <h5>Channels</h5>
+            <div class="list-group mb-3" id="channels">
+                <a href="#" class="list-group-item list-group-item-action active" data-channel="email">Email & Chat</a>
+                <a href="#" class="list-group-item list-group-item-action" data-channel="voice">Live Voice</a>
+                <a href="#" class="list-group-item list-group-item-action" data-channel="audit">Auditing</a>
+            </div>
+
+            <h6 class="mt-3">Tickets</h6>
+            <div id="ticketList" class="list-group">
+                <!-- tickets populated by JS -->
+            </div>
+
+            <hr>
+            <div class="mb-2">
+                <button id="createTicketBtn" class="btn btn-sm btn-primary">Create Test Ticket (AI pipeline)</button>
+                <button id="createCallBtn" class="btn btn-sm btn-outline-secondary">Simulate Call</button>
+            </div>
+
+            <div class="mt-3 small muted-small">Demo: all AI agents are simulated in-browser. Real system would call backend AI services (OpenAI, Azure Cognitive Services) and orchestration (AutoGen/Semantic Kernel).</div>
+        </div>
+
+        <!-- CENTER: ticket view / conversation / voice -->
+        <div class="center">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h4 id="centerTitle">Email Ticket Resolution</h4>
+                <div>
+                    <span class="chip me-2">Multi-Agent Demo</span>
+                    <span id="selectedTicketMeta" class="muted-small"></span>
+                </div>
+            </div>
+
+            <div id="ticketView" class="card">
+                <div class="card-body" id="ticketBody">
+                    <div id="emptyState" class="text-center py-5 text-muted">Select a ticket from the left or create one to run the AI multi-agent pipeline.</div>
+
+                    <div id="ticketContent" style="display:none">
+                        <div class="mb-2"><strong>From:</strong> <span id="tvFrom"></span> &nbsp; <span class="muted-small" id="tvTime"></span></div>
+                        <div class="mb-3"><strong>Subject:</strong> <span id="tvSubject"></span></div>
+                        <div class="mb-3"><pre id="tvMessage" class="transcript bg-light p-3 rounded"></pre></div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>AI Draft Reply</h6>
+                                        <textarea id="draftReply" rows="6" class="form-control mb-2"></textarea>
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <button id="acceptDraft" class="btn btn-sm btn-success">Accept</button>
+                                                <button id="editDraft" class="btn btn-sm btn-outline-secondary">Edit</button>
+                                            </div>
+                                            <div class="muted-small">Quality: <span id="draftQuality">—</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Agent Steps (Multi-Agent Pipeline)</h6>
+                                        <ol id="pipelineSteps" class="ps-3 mb-0">
+                                            <!-- steps appended -->
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <button id="sendReply" class="btn btn-primary">Send Reply (simulate)</button>
+                        </div>
+
+                        <h6>Knowledge / References</h6>
+                        <div id="knowledgeCards" class="d-flex gap-2 flex-wrap mb-3"></div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- VOICE simulation panel -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6>Voice Channel (Simulated)</h6>
+                    <div class="mb-2">
+                        <button id="startCall" class="btn btn-sm btn-outline-success">Start Call</button>
+                        <button id="endCall" class="btn btn-sm btn-outline-danger" disabled>End Call</button>
+                        <span id="callStatus" class="ms-2 muted-small">No active call</span>
+                    </div>
+                    <div id="callTranscript" class="transcript bg-white p-2 rounded" style="min-height:80px; border:1px dashed #ddd"></div>
+                    <div class="mt-2 small muted-small">During a call, the agents will suggest prompts and compliance checks in real-time.</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: auditing dashboard -->
+        <div class="right">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5>Auditing Dashboard</h5>
+                <small class="muted-small">100% call & ticket coverage (demo)</small>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body audit-card">
+                    <h6>Recent Audit Items</h6>
+                    <div id="auditList" class="list-group list-group-flush">
+                        <!-- audit items -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h6>KPIs</h6>
+                    <div class="row">
+                        <div class="col-6"><div class="mb-2">QA pass-rate<br><strong id="kpiQA">—</strong></div></div>
+                        <div class="col-6"><div class="mb-2">Avg Resolution (min)<br><strong id="kpiRes">—</strong></div></div>
+                        <div class="col-6"><div class="mb-2">Compliance alerts<br><strong id="kpiCom">—</strong></div></div>
+                        <div class="col-6"><div class="mb-2">Missed-upsell<br><strong id="kpiMiss">—</strong></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6>Supervisor Tools</h6>
+                    <div class="mb-2">
+                        <button id="coachBtn" class="btn btn-sm btn-outline-primary">Prepare Coaching Notes</button>
+                        <button id="exportAudit" class="btn btn-sm btn-outline-secondary">Export CSV</button>
+                    </div>
+                    <div id="coachOutput" class="mt-2 small muted-small"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // ===================== Demo data & utilities =====================
+    const tickets = [];
+    const audits = [];
+    let selectedTicketId = null;
+    let callActive = false;
+
+    function uid(prefix='id'){
+      return prefix + Math.random().toString(36).slice(2,9);
+    }
+
+    function nowStr(){ return new Date().toLocaleString(); }
+
+    // seed some tickets
+    function seed(){
+      const examples = [
+        {from:'alice@example.com', subject:'Order delayed - need update', message:'Hi team, my order #4521 has not arrived. Please advise ETA. Regards, Alice'},
+        {from:'bob@example.com', subject:'Refund status for invoice 9921', message:'I requested a refund last week but have not received confirmation. Please assist.'},
+        {from:'carol@example.com', subject:'Change shipping address', message:'I need to change shipping address to 12 Park Lane, ASAP. Order 5588.'}
+      ];
+      examples.forEach(e=> createTicket(e.from,e.subject,e.message,Math.random()>0.5));
+    }
+
+    function createTicket(from, subject, message, unread=true){
+      const t = { id: uid('t_'), from, subject, message, time: nowStr(), unread, status:'open', createdAt: new Date(), history: [] };
+      tickets.unshift(t);
+      renderTicketList();
+      return t;
+    }
+
+    function renderTicketList(){
+      const $list = $('#ticketList'); $list.empty();
+      tickets.forEach(t=>{
+        const $a = $(`<a href="#" class="list-group-item list-group-item-action ticket ${t.unread?'unread':''}" data-id="${t.id}">`+
+                    `<div class="d-flex w-100 justify-content-between"><strong>${t.subject}</strong><small class="text-muted">${t.time}</small></div>`+
+                    `<div class="small">${t.from} <span class="badge bg-light text-dark agent-badge">${t.status}</span></div>`+
+                    `</a>`);
+        $a.click(()=>{ selectTicket(t.id); });
+        $list.append($a);
+      });
+    }
+
+    function selectTicket(id){
+      selectedTicketId = id;
+      const t = tickets.find(x=>x.id===id);
+      if(!t) return;
+      t.unread=false;
+      $('#emptyState').hide();
+      $('#ticketContent').show();
+      $('#tvFrom').text(t.from);
+      $('#tvTime').text(t.time);
+      $('#tvSubject').text(t.subject);
+      $('#tvMessage').text(t.message);
+      $('#draftReply').val('');
+      $('#selectedTicketMeta').text(t.id+' | '+t.status);
+      $('#pipelineSteps').empty();
+      $('#knowledgeCards').empty();
+      renderTicketList();
+
+      // run demo multi-agent pipeline
+      runMultiAgentPipeline(t);
+    }
+
+    // ===================== Simulated multi-agent pipeline =====================
+    // Agents: classification, sentiment, summarization, knowledge lookup, draft generation, quality check
+
+    function appendStep(text){ $('#pipelineSteps').append(`<li>${text}</li>`); }
+
+    function runMultiAgentPipeline(ticket){
+      $('#pipelineSteps').empty();
+      appendStep('Ingest & normalize message');
+      setTimeout(()=>{
+        const classification = classificationAgent(ticket.message);
+        appendStep('Classification: '+classification);
+        setTimeout(()=>{
+          const sentiment = sentimentAgent(ticket.message);
+          appendStep('Sentiment score: '+(sentiment.score.toFixed(2))+' ('+sentiment.label+')');
+          setTimeout(()=>{
+            const summary = summarizationAgent(ticket.message);
+            appendStep('Summary: '+summary.slice(0,100));
+            setTimeout(()=>{
+              const refs = knowledgeLookupAgent(ticket.subject, ticket.message);
+              appendStep('Knowledge lookup: found '+refs.length+' references');
+              renderKnowledge(refs);
+              setTimeout(()=>{
+                const draft = draftAgent(ticket, classification, sentiment, summary, refs);
+                appendStep('Draft reply generated by Response Agent');
+                $('#draftReply').val(draft.text);
+                $('#draftQuality').text(draft.quality+'/100');
+                // store pipeline in ticket history
+                ticket.history.push({ts: new Date(), pipeline: {classification, sentiment, summary, refs, draft}});
+                // add audit
+                addAuditItem(ticket, ticket.history[ticket.history.length-1]);
+              },600);
+            },500);
+          },500);
+        },400);
+      },300);
+    }
+
+    // ---- agents (simple heuristics & fake responses) ----
+    function classificationAgent(text){
+      const lower = text.toLowerCase();
+      if(lower.includes('refund')||lower.includes('invoice')) return 'billing';
+      if(lower.includes('order')||lower.includes('shipping')||lower.includes('address')) return 'order';
+      if(lower.includes('password')||lower.includes('login')) return 'account';
+      return 'general';
+    }
+
+    function sentimentAgent(text){
+      const negWords=['not','delay','complain','refund','angry','disappointed','late'];
+      let score = 0.5;
+      negWords.forEach(w=>{ if(text.toLowerCase().includes(w)) score -= 0.08; });
+      score = Math.max(0, Math.min(1, score));
+      return {score, label: score>0.6?'positive':(score<0.4?'negative':'neutral')};
+    }
+
+    function summarizationAgent(text){
+      // tiny extractive summary
+      if(text.length<120) return text;
+      return text.split('.').slice(0,2).join('.').trim() + (text.includes('.')?'.':'');
+    }
+
+    function knowledgeLookupAgent(subject,message){
+      // pretend to search knowledge base
+      const kb = [
+        {title:'Shipping policy', id:'KB-001', excerpt:'Orders usually ship within 2 business days. Expedited options available.'},
+        {title:'Refund policy', id:'KB-002', excerpt:'Refunds processed within 5-7 business days after approval.'},
+        {title:'Address change flow', id:'KB-003', excerpt:'We can change shipping address if order is not yet shipped.'}
+      ];
+      const hits = kb.filter(k=> (subject+message).toLowerCase().includes(k.title.split(' ')[0].toLowerCase()) || Math.random()>0.6 );
+      return hits.slice(0,3);
+    }
+
+    function draftAgent(ticket, classification, sentiment, summary, refs){
+      // produce a canned draft depending on classification
+      let text = '';
+      if(classification==='order'){
+        text = `Hi ${ticket.from.split('@')[0]},\n\nThanks for reaching out about your order. ${refs.length?refs[0].excerpt+' ':''}We are checking the status and will update you within 24 hours. Could you please confirm your order number and preferred contact?\n\nRegards, Support`;
+      } else if(classification==='billing'){
+        text = `Hi ${ticket.from.split('@')[0]},\n\nThanks for contacting us about the refund. ${refs.length?refs[0].excerpt+' ':''}I've opened a ticket with billing and you'll receive an update within 2 business days.\n\nRegards, Billing Team`;
+      } else {
+        text = `Hi ${ticket.from.split('@')[0]},\n\nThanks for reaching out. ${summary} We'll investigate and respond shortly.\n\nRegards, Support`;
+      }
+      const quality = Math.round(70 + Math.random()*25);
+      return {text, quality};
+    }
+
+    function renderKnowledge(refs){
+      const $k = $('#knowledgeCards'); $k.empty();
+      refs.forEach(r=>{
+        const $c = $(`<div class="card p-2 me-2 mb-2" style="width:100%;max-width:320px"><div class="card-body p-2">`+
+                     `<strong>${r.title}</strong><div class="small">${r.excerpt}</div>`+
+                     `<div class="mt-2"><button class="btn btn-sm btn-outline-primary use-knowledge" data-ex="${r.excerpt}">Use</button></div>`+
+                     `</div></div>`);
+        $k.append($c);
+      });
+    }
+
+    // ===================== Auditing =====================
+    function addAuditItem(ticket, pipeline){
+      const item = { id: uid('a_'), ticketId: ticket.id, time: new Date(), summary: pipeline.pipeline.summary || '', sentiment: pipeline.pipeline.sentiment.label, quality: pipeline.pipeline.draft.quality, complianceFlags: detectCompliance(pipeline.pipeline), notes: '' };
+      audits.unshift(item);
+      renderAuditList();
+      updateKPIs();
+    }
+
+    function detectCompliance(p){
+      // naive compliance detection: flag if promises >48h or personal data
+      const flags = [];
+      if(p.summary && p.summary.toLowerCase().includes('asap')) flags.push('Vague SLA');
+      if(p.draft && p.draft.text && p.draft.text.toLowerCase().includes('password')) flags.push('Sensitive info in draft');
+      // random flag
+      if(Math.random()>0.95) flags.push('Policy risk: refund promise');
+      return flags;
+    }
+
+    function renderAuditList(){
+      const $list = $('#auditList'); $list.empty();
+      audits.forEach(a=>{
+        const $it = $(`<div class="list-group-item">`+
+                     `<div class="d-flex w-100 justify-content-between"><strong>${a.ticketId}</strong><small class="text-muted">${a.time.toLocaleString()}</small></div>`+
+                     `<div class="small">Sentiment: ${a.sentiment} | Quality: ${a.quality} ${a.complianceFlags.length?'<span class="badge bg-warning text-dark ms-2">'+a.complianceFlags.join(', ')+'</span>':''}</div>`+
+                     `</div>`);
+        $list.append($it);
+      });
+    }
+
+    function updateKPIs(){
+      // simple aggregations
+      const qaPass = audits.filter(a=>a.quality>=80).length / (audits.length||1);
+      const avgRes = Math.round((audits.length? (audits.length*5 + Math.random()*10):0));
+      $('#kpiQA').text(Math.round(qaPass*100)+'%');
+      $('#kpiRes').text(avgRes);
+      $('#kpiCom').text(audits.reduce((s,a)=>s + (a.complianceFlags.length),0));
+      $('#kpiMiss').text(Math.round(Math.random()*10)+'%');
+    }
+
+    // ===================== Supervisor tools =====================
+    $('#coachBtn').click(()=>{
+      const lowQuality = audits.filter(a=>a.quality<75).slice(0,5);
+      let txt = '';
+      if(lowQuality.length===0) txt = 'No low-quality interactions found.';
+      else{
+        txt = 'Coaching notes:\n';
+        lowQuality.forEach(a=> txt += `- ${a.ticketId}: review draft quality (${a.quality}). Flags: ${a.complianceFlags.join(', ') || 'none'}\n`);
+      }
+      $('#coachOutput').text(txt);
+    });
+
+    $('#exportAudit').click(()=>{
+      // export simple CSV
+      let csv = 'auditId,ticketId,time,sentiment,quality,flags\n';
+      audits.forEach(a=>{ csv += `${a.id},${a.ticketId},"${a.time.toISOString()}",${a.sentiment},${a.quality},"${a.complianceFlags.join('|')}"\n`; });
+      const blob = new Blob([csv], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'audit_export.csv'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    $('#createTicketBtn').click(()=>{
+      const subj = 'New ticket '+new Date().getSeconds();
+      createTicket('user'+Math.floor(Math.random()*100)+'@example.com', subj, 'This is a demo ticket created to exercise the AI pipeline. Please respond.');
+    });
+
+    // send reply simulation
+    $('#sendReply').click(()=>{
+      if(!selectedTicketId) return alert('Select a ticket');
+      const t = tickets.find(x=>x.id===selectedTicketId);
+      const reply = $('#draftReply').val();
+      t.status='closed';
+      t.history.push({ts:new Date(), action:'sent_reply', text:reply});
+      renderTicketList();
+      alert('Reply sent (simulated). Ticket closed.');
+    });
+
+    // knowledge use button
+    $(document).on('click','.use-knowledge', function(){
+      const ex = $(this).data('ex');
+      const cur = $('#draftReply').val();
+      $('#draftReply').val(cur + '\n\nRef: ' + ex);
+    });
+
+    // accept/edit draft
+    $('#acceptDraft').click(()=>{ alert('Draft accepted by human agent. (simulated)'); });
+    $('#editDraft').click(()=>{ $('#draftReply').focus(); });
+
+    // ===================== Voice simulation =====================
+    $('#startCall').click(()=>{
+      callActive = true; $('#startCall').attr('disabled',true); $('#endCall').attr('disabled',false); $('#callStatus').text('Call in progress');
+      $('#callTranscript').text('Call started...\nAgent: Hello, thanks for calling. How may I help you?');
+      // simulate transcript + live agent suggestions
+      simulateCallTranscript();
+    });
+
+    $('#endCall').click(()=>{ callActive=false; $('#startCall').attr('disabled',false); $('#endCall').attr('disabled',true); $('#callStatus').text('No active call'); $('#callTranscript').append('\nCall ended.'); });
+
+    function simulateCallTranscript(){
+      let i=0; const lines = [
+        'Customer: Hi, I have an issue with my delivery. It is late.',
+        'Agent: I am sorry to hear that, can you provide order ID?',
+        'Customer: Order 4521',
+        'Agent: Thank you. I will check with shipping team and update you within 24 hours.'
+      ];
+      const int = setInterval(()=>{
+        if(!callActive || i>=lines.length){ clearInterval(int); return; }
+        $('#callTranscript').append('\n'+lines[i]);
+        // generate live suggestions
+        const s = liveAgentSupport(lines[i]);
+        $('#pipelineSteps').prepend(`<li>LiveAssist: ${s}</li>`);
+        i++;
+      },1200);
+    }
+
+    function liveAgentSupport(latestUtterance){
+      // suggest clarifying Qs and compliance cues
+      const suggestions = [];
+      if(latestUtterance.toLowerCase().includes('late')) suggestions.push('Ask for order ID and apology script');
+      if(latestUtterance.toLowerCase().includes('refund')) suggestions.push('Escalate to Billing, advise SLA');
+      if(Math.random()>0.8) suggestions.push('Check for PII and avoid asking sensitive details');
+      return suggestions.join('; ');
+    }
+
+    // ===================== initialization =====================
+    $(function(){ seed(); renderTicketList(); updateKPIs(); });
+    </script>
+</body>
+</html>
