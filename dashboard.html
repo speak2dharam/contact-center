@@ -7,19 +7,25 @@
     <link href="assets/css/bootstrap.css" rel="stylesheet" />
     <!--<link href="assets/css/icofont.css" rel="stylesheet" />-->
     <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/responsive.css" rel="stylesheet" />
     <link href="assets/css/all.min.css" rel="stylesheet" />
 </head>
 <body>
     <section class="topbar">
         <div class="container-fluid">
-            <div class="row align-items-center">
+            <div class="row align-items-center gx-2">
+                <div class="col-auto d-block d-md-none d-lg-none">
+                    <a href="javascript:void()" id="toggleSidebar" class="text-white fs-5">
+                        <i class="fa-solid fa-bars"></i>
+                    </a>
+                </div>
                 <div class="col-auto">
                     <div class="d-flex align-items-center">
                         <img src="assets/img/svg/communication.svg" style="height:40px" />
                         <span class="ms-2 fw-medium fs-6 text-white"> AI Contact Center </span>
                     </div>
                 </div>
-                <div class="col-md">
+                <div class="col">
                     <div class="d-flex justify-content-end">
                         <div class="dropdown topDropdowns">
                             <a class="" href="#" id="profileBtn" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -281,6 +287,7 @@
             // Toggle sidebar collapse
             $("#toggleSidebar").on("click", function () {
                 $("#sidebar").toggleClass("collapsed");
+                //$("#sidebar").toggle();
             });
             // Rotate chevron icon on submenu toggle
             $('#sidebar .nav-link[data-bs-toggle="collapse"]').on('click', function () {
