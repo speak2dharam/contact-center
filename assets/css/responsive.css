@@ -27,4 +27,8 @@
     #sidebar {
         display: none;
     }
+    .logo-box::before{
+        display:none;
+        width:0;
+    }
 }
