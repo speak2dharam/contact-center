@@ -1,0 +1,279 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI-Driven Contact-Center </title>
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+    <!--<link href="assets/css/icofont.css" rel="stylesheet" />-->
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/responsive.css" rel="stylesheet" />
+    <link href="assets/css/all.min.css" rel="stylesheet" />
+</head>
+<body>
+    <section class="topbar">
+        <div class="container-fluid">
+            <div class="row align-items-center gx-2">
+                <div class="col-auto d-block d-md-none d-lg-none">
+                    <a href="javascript:void()" id="toggleSidebar" class="text-white fs-5">
+                        <i class="fa-solid fa-bars"></i>
+                    </a>
+                </div>
+                <div class="col-auto">
+                    <div class="d-flex align-items-center">
+                        <img src="assets/img/svg/communication.svg" style="height:40px" />
+                        <span class="ms-2 fw-medium fs-6 text-white"> AI Contact Center </span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex justify-content-end">
+                        <div class="dropdown topDropdowns">
+                            <a class="" href="#" id="profileBtn" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span>
+                                    <i class="fa-regular fa-user"></i>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu bg-light shadow dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void()">
+                                        <i class="fa-regular fa-user"></i>
+                                        <span class="ms-2">demo@unifycloud.com</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void()">
+                                        <i class="fa-solid fa-diamond-turn-right"></i>
+                                        <span class="ms-2">Go to Admin Panel</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="login.html">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                        <span class="ms-2">Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="d-flex">
+        <nav id="sidebar" class="">
+            <div class="py-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <img src="assets/img/svg/bottom-view.svg" />
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="ticket-management.html" class="nav-link">
+                            <img src="assets/img/svg/ticket.svg" />
+                            <span>Tickets</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="voice-call.html" class="nav-link active">
+                            <img src="assets/img/svg/telecommunication.svg" />
+                            <span>Voice Calls</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="quality-audit.html" class="nav-link">
+                            <img src="assets/img/svg/search.svg" />
+                            <span>Qulity Audit</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <img src="assets/img/svg/ceo.svg" />
+                            <span>Agent Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <img src="assets/img/svg/pie-chart.svg" />
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <img src="assets/img/svg/settings.svg" />
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <!--<li class="nav-item"><a class="nav-link d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse" href="#usersMenu" role="button" aria-expanded="false" aria-controls="usersMenu"><span><i class="fa-solid fa-users"></i> Users</span><i class="fa-solid fa-chevron-down"></i></a><div class="collapse submenu" id="usersMenu"><ul class="nav flex-column"><li><a href="#" class="nav-link"><i class="fa-solid fa-user-plus"></i> Add User</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-user-gear"></i> Manage Users</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-user-shield"></i> User Roles</a></li></ul></div></li><li class="nav-item"><a class="nav-link d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse" href="#settingsMenu" role="button" aria-expanded="false" aria-controls="settingsMenu"><span><i class="fa-solid fa-gear"></i> Settings</span><i class="fa-solid fa-chevron-down"></i></a><div class="collapse submenu" id="settingsMenu"><ul class="nav flex-column"><li><a href="#" class="nav-link"><i class="fa-solid fa-sliders"></i> General</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-lock"></i> Security</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-bell"></i> Notifications</a></li></ul></div></li>-->
+                </ul>
+            </div>
+        </nav>
+        <div id="content" class="flex-grow-1">
+            <!--<button id="toggleSidebar" class="btn btn-primary mb-3"><i class="bi bi-list"></i> Toggle Sidebar
+                </button>-->
+            <div class="px-4 py-2 border-bottom">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="mb-0">Voice Calls</h5>
+                    </div>
+                    <div class="col">
+                        <div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-4">
+                <div class="row g-4">
+                    <div class="col-md">
+                        <div class="py-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="mb-0 fs-6">Active Call</h4>
+                                <div class="call-timer fs-6">04:32</div>
+                            </div>
+                            <div>
+                                <div class="call-controls mb-4">
+                                    <div class="row mb-3">
+                                        <div class="col text-center">
+                                            <button class="btn btn-lg btn-outline-secondary me-2"><i class="fas fa-volume-up"></i></button>
+                                            <button class="btn btn-lg btn-outline-secondary me-2"><i class="fas fa-microphone-slash"></i></button>
+                                            <button class="btn btn-lg btn-danger"><i class="fas fa-phone-slash"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="chat-container">
+                                    <!--<div class="chat-header">
+                                        <h1>AI Assistant</h1>
+                                        <p>Ask me anything and I'll help you</p>
+                                    </div>-->
+
+                                    <div class="chat-messages" id="chat-messages">
+                                        <div class="drop-overlay" id="drop-overlay">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                            <p>Drop your files here</p>
+                                        </div>
+
+                                        <div class="message ai-message">
+                                            <div class="ai-avatar">
+                                                <i class="fas fa-robot"></i>
+                                            </div>
+                                            <div class="message-bubble ai-bubble">
+                                                <div class="ai-response">Hello! I'm your AI assistant. How can I help you today?</div>
+                                                <div class="timestamp">Just now</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="chat-input-container">
+                                        <div class="input-area">
+                                            <div class="text-input-container">
+                                                <textarea id="chat-input" placeholder="Type your message here..." rows="1"></textarea>
+                                            </div>
+                                            <button class="attachment-btn" id="attachment-btn">
+                                                <i class="fas fa-paperclip"></i>
+                                            </button>
+                                            <button class="send-btn" id="send-btn">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </div>
+
+                                        <div class="attachments" id="attachments"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border-start h-100 py-4 ps-4">
+                            <h6 class="mb-4">AI Real-Time Assistance</h6>
+                            <div class="bg-white rounded-2 p-3 mb-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fa-solid fa-heart text-danger"></i>
+                                    <span class="ms-1 text-body fw-medium">Sentiment Analysis</span>
+                                </div>
+                                <div class="progress" role="progressbar" aria-label="Warning example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar bg-danger" style="width: 75%"></div>
+                                </div>
+                                <p class="mb-0 mt-2">Customer is frustrated. Use empathetic language.</p>
+                            </div>
+                            <div class="bg-white rounded-2 p-3 mb-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fa-solid fa-lightbulb text-info"></i>
+                                    <span class="ms-1 text-body fw-medium">Suggested Solutions</span>
+                                </div>
+
+                                <ul class="small mb-0">
+                                    <li>Guide through password reset process</li>
+                                    <li>Suggest app reinstallation</li>
+                                    <li>Check for service outages</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-2 p-3 mb-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fa-solid fa-shield-halved text-success"></i>
+                                    <span class="ms-1 text-body fw-medium">Compliance Check</span>
+                                </div>
+
+                                <ul class="small mb-0">
+                                    <li>Guide through password reset process</li>
+                                    <li>Suggest app reinstallation</li>
+                                    <li>Check for service outages</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-2 p-3 mb-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fa-solid fa-chart-line text-primary"></i>
+                                    <span class="ms-1 text-body fw-medium">Upsell Opportunity</span>
+                                </div>
+
+                                <ul class="small mb-0">
+                                    <li>Guide through password reset process</li>
+                                    <li>Suggest app reinstallation</li>
+                                    <li>Check for service outages</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="assets/js/jquery-3.7.1.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/voice.js"></script>
+
+    <script>
+        const profileDropdownBtn = document.getElementById('profileBtn');
+        new bootstrap.Dropdown(profileDropdownBtn, {
+            popperConfig: {
+                modifiers: [{
+                    name: 'offset',
+                    options: {
+                        offset: [0, 8] // move down by 48px
+                    }
+                }]
+            }
+        });
+        // Simulate active call timer
+        let callSeconds = 272; // 4 minutes 32 seconds
+        setInterval(function () {
+            callSeconds++;
+            const minutes = Math.floor(callSeconds / 60);
+            const seconds = callSeconds % 60;
+            $('.call-timer').text(
+                minutes.toString().padStart(2, '0') + ':' +
+                seconds.toString().padStart(2, '0')
+            );
+        }, 1000);
+    </script>
+
+
+</body>
+</html>

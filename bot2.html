@@ -1,0 +1,678 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot with Drop Area</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            height: 80vh;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+            .chat-header h1 {
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            .chat-header p {
+                font-size: 14px;
+                opacity: 0.8;
+                margin-top: 5px;
+            }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            position: relative;
+        }
+
+            .chat-messages.drop-active {
+                background-color: rgba(142, 84, 233, 0.1);
+                border: 2px dashed #8E54E9;
+            }
+
+        .drop-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(142, 84, 233, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            z-index: 10;
+            border-radius: 10px;
+            display: none;
+        }
+
+            .drop-overlay.active {
+                display: flex;
+            }
+
+            .drop-overlay i {
+                font-size: 48px;
+                margin-bottom: 15px;
+            }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .ai-message {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 15px;
+            border-radius: 18px;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-bubble {
+            background: linear-gradient(to right, #4776E6, #8E54E9);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .ai-bubble {
+            background-color: white;
+            color: #333;
+            border-bottom-left-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .ai-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #4776E6, #8E54E9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            color: #666;
+            font-size: 18px;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background-color: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .input-area {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .text-input-container {
+            flex: 1;
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 10px 15px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+            .text-input-container:focus-within {
+                border-color: #8E54E9;
+                box-shadow: 0 0 0 2px rgba(142, 84, 233, 0.2);
+            }
+
+        #chat-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            resize: none;
+            font-size: 16px;
+            line-height: 1.5;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .attachment-btn {
+            background: none;
+            border: none;
+            color: #8E54E9;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+            .attachment-btn:hover {
+                background-color: #f0f0f0;
+            }
+
+        .send-btn {
+            background: linear-gradient(to right, #4776E6, #8E54E9);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: transform 0.2s;
+        }
+
+            .send-btn:hover {
+                transform: scale(1.05);
+            }
+
+            .send-btn:active {
+                transform: scale(0.95);
+            }
+
+        .attachments {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .attachment-item {
+            background-color: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+            .attachment-item i {
+                color: #8E54E9;
+            }
+
+        .attachment-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .attachment-name {
+            font-weight: 500;
+        }
+
+        .attachment-size {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .remove-attachment {
+            cursor: pointer;
+            margin-left: 5px;
+            color: #ff4757;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+            background-color: white;
+            border-radius: 18px;
+            border-bottom-left-radius: 5px;
+            width: fit-content;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #8E54E9;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+            .typing-dot:nth-child(1) {
+                animation-delay: 0s;
+            }
+
+            .typing-dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .typing-dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .ai-response {
+            white-space: pre-wrap;
+        }
+
+            .ai-response h1, .ai-response h2, .ai-response h3 {
+                margin-top: 10px;
+                margin-bottom: 5px;
+            }
+
+            .ai-response p {
+                margin-bottom: 10px;
+            }
+
+            .ai-response code {
+                background-color: #f5f5f5;
+                padding: 2px 4px;
+                border-radius: 4px;
+                font-family: monospace;
+            }
+
+            .ai-response pre {
+                background-color: #f5f5f5;
+                padding: 10px;
+                border-radius: 5px;
+                overflow-x: auto;
+                margin: 10px 0;
+            }
+
+            .ai-response blockquote {
+                border-left: 4px solid #8E54E9;
+                padding-left: 15px;
+                margin: 10px 0;
+                color: #666;
+            }
+
+        .timestamp {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        @media (max-width: 600px) {
+            .chat-container {
+                height: 90vh;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>AI Assistant</h1>
+            <p>Ask me anything and I'll help you</p>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            <div class="drop-overlay" id="drop-overlay">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drop your files here</p>
+            </div>
+
+            <div class="message ai-message">
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-bubble ai-bubble">
+                    <div class="ai-response">Hello! I'm your AI assistant. How can I help you today?</div>
+                    <div class="timestamp">Just now</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input-container">
+            <div class="input-area">
+                <div class="text-input-container">
+                    <textarea id="chat-input" placeholder="Type your message here..." rows="1"></textarea>
+                </div>
+                <button class="attachment-btn" id="attachment-btn">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+                <button class="send-btn" id="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+
+            <div class="attachments" id="attachments"></div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            const chatInput = $('#chat-input');
+            const sendBtn = $('#send-btn');
+            const attachmentBtn = $('#attachment-btn');
+            const attachmentsContainer = $('#attachments');
+            const chatMessages = $('#chat-messages');
+            const dropOverlay = $('#drop-overlay');
+
+            let attachments = [];
+
+            // Auto-resize textarea
+            chatInput.on('input', function () {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Send message on button click
+            sendBtn.on('click', sendMessage);
+
+            // Send message on Enter key (but allow Shift+Enter for new line)
+            chatInput.on('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Handle file selection
+            $('#file-input').on('change', function (e) {
+                handleFiles(e.target.files);
+            });
+
+            // Drag and drop functionality for chat area
+            chatMessages.on('dragover', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                chatMessages.addClass('drop-active');
+                dropOverlay.addClass('active');
+            });
+
+            chatMessages.on('dragleave', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                // Only remove if we're leaving the chat area, not entering a child element
+                if (!$(e.relatedTarget).closest('.chat-messages').length) {
+                    chatMessages.removeClass('drop-active');
+                    dropOverlay.removeClass('active');
+                }
+            });
+
+            chatMessages.on('drop', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                chatMessages.removeClass('drop-active');
+                dropOverlay.removeClass('active');
+                handleFiles(e.originalEvent.dataTransfer.files);
+            });
+
+            // Handle file processing
+            function handleFiles(files) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    attachments.push(file);
+
+                    const attachmentItem = $('<div class="attachment-item"></div>');
+                    const fileSize = formatFileSize(file.size);
+
+                    attachmentItem.html(`
+                            <i class="fas fa-file"></i>
+                            <div class="attachment-info">
+                                <span class="attachment-name">${file.name}</span>
+                                <span class="attachment-size">${fileSize}</span>
+                            </div>
+                            <i class="fas fa-times remove-attachment"></i>
+                        `);
+
+                    attachmentItem.find('.remove-attachment').on('click', function () {
+                        const index = attachments.indexOf(file);
+                        if (index > -1) {
+                            attachments.splice(index, 1);
+                        }
+                        attachmentItem.remove();
+                    });
+
+                    attachmentsContainer.append(attachmentItem);
+                }
+            }
+
+            // Format file size
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            // Send message function
+            function sendMessage() {
+                const message = chatInput.val().trim();
+                if (message === '' && attachments.length === 0) return;
+
+                // Add user message to chat
+                addMessage(message, 'user', attachments);
+
+                // Clear input and attachments
+                chatInput.val('');
+                chatInput.css('height', 'auto');
+                attachments = [];
+                attachmentsContainer.empty();
+
+                // Show typing indicator
+                showTypingIndicator();
+
+                // Simulate AI response after a delay
+                setTimeout(() => {
+                    // Remove typing indicator
+                    $('.typing-indicator').remove();
+
+                    // Generate and display AI response
+                    const aiResponse = generateAIResponse(message);
+                    addMessageWithTypingEffect(aiResponse, 'ai');
+
+                    // Scroll to bottom
+                    chatMessages.scrollTop(chatMessages[0].scrollHeight);
+                }, 1500);
+            }
+
+            // Add message to chat
+            function addMessage(content, sender, files = []) {
+                const messageElement = $('<div class="message"></div>');
+                messageElement.addClass(sender + '-message');
+
+                if (sender === 'user') {
+                    messageElement.html(`
+                            <div class="message-bubble user-bubble">
+                                <div>${content}</div>
+                                ${files.length > 0 ? `<div class="attachments">${generateAttachmentsHTML(files)}</div>` : ''}
+                                <div class="timestamp">${getCurrentTime()}</div>
+                            </div>
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        `);
+                } else {
+                    messageElement.html(`
+                            <div class="ai-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-bubble ai-bubble">
+                                <div class="ai-response">${content}</div>
+                                <div class="timestamp">${getCurrentTime()}</div>
+                            </div>
+                        `);
+                }
+
+                chatMessages.append(messageElement);
+
+                // Scroll to bottom
+                chatMessages.scrollTop(chatMessages[0].scrollHeight);
+            }
+
+            // Generate attachments HTML
+            function generateAttachmentsHTML(files) {
+                let html = '';
+                for (const file of files) {
+                    const fileSize = formatFileSize(file.size);
+                    html += `
+                            <div class="attachment-item">
+                                <i class="fas fa-file"></i>
+                                <div class="attachment-info">
+                                    <span class="attachment-name">${file.name}</span>
+                                    <span class="attachment-size">${fileSize}</span>
+                                </div>
+                            </div>
+                        `;
+                }
+                return html;
+            }
+
+            // Show typing indicator
+            function showTypingIndicator() {
+                const typingIndicator = $('<div class="message ai-message typing-indicator"></div>');
+                typingIndicator.html(`
+                        <div class="ai-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    `);
+
+                chatMessages.append(typingIndicator);
+                chatMessages.scrollTop(chatMessages[0].scrollHeight);
+            }
+
+            // Generate AI response with typing effect
+            function addMessageWithTypingEffect(content, sender) {
+                const messageElement = $('<div class="message"></div>');
+                messageElement.addClass(sender + '-message');
+
+                if (sender === 'ai') {
+                    messageElement.html(`
+                            <div class="ai-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-bubble ai-bubble">
+                                <div class="ai-response"></div>
+                                <div class="timestamp">${getCurrentTime()}</div>
+                            </div>
+                        `);
+
+                    chatMessages.append(messageElement);
+
+                    // Apply typing effect
+                    const responseElement = messageElement.find('.ai-response');
+                    const formattedContent = marked.parse(content);
+
+                    let i = 0;
+                    const typingEffect = setInterval(() => {
+                        if (i < formattedContent.length) {
+                            responseElement.html(formattedContent.substring(0, i + 1));
+                            i++;
+                            chatMessages.scrollTop(chatMessages[0].scrollHeight);
+                        } else {
+                            clearInterval(typingEffect);
+                        }
+                    }, 10);
+                }
+
+                chatMessages.scrollTop(chatMessages[0].scrollHeight);
+            }
+
+            // Generate sample AI response
+            function generateAIResponse(userMessage) {
+                const responses = [
+                    `I understand you're asking about "${userMessage}". Here's what I can tell you:\n\nThis is a sample response from your AI assistant. In a real implementation, this would be connected to an AI service like OpenAI's GPT or a similar model.\n\n**Key points to consider:**\n- Make sure your question is clear and specific\n- I can help with a wide variety of topics\n- Feel free to ask follow-up questions\n\nLet me know if you need more details!`,
+
+                    `Thanks for your question: "${userMessage}".\n\nI've analyzed your query and here's my response:\n\n> This is a demonstration of how the chatbot would work with formatted responses using Markdown.\n\nYou can include:\n- **Bold text** for emphasis\n- *Italic text* for subtle emphasis\n- \`Code snippets\` for technical content\n- Lists for organized information\n\nWould you like me to elaborate on any specific aspect?`,
+
+                    `Regarding "${userMessage}", here's what I found:\n\n# Main Topic\nThis would be the main heading in a real response.\n\n## Subheading\nThis would be a subheading with more specific information.\n\n### Details\n- First important point\n- Second important point\n- Third important point\n\n\`\`\`javascript\n// Example code block\nfunction example() {\n  console.log("This is a code sample");\n}\n\`\`\`\n\nI hope this helps! Let me know if you have more questions.`
+                ];
+
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+
+            // Get current time in HH:MM format
+            function getCurrentTime() {
+                const now = new Date();
+                return now.getHours().toString().padStart(2, '0') + ':' +
+                    now.getMinutes().toString().padStart(2, '0');
+            }
+
+            // Initialize with a file input (hidden)
+            const fileInput = $('<input type="file" id="file-input" multiple style="display: none;">');
+            $('body').append(fileInput);
+
+            attachmentBtn.on('click', function () {
+                fileInput.click();
+            });
+        });
+    </script>
+</body>
+</html>

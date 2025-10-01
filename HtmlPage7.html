@@ -1,0 +1,837 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>HR Multi-Agent Platform — Prototype</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <!-- CDN: Bootstrap for layout + jQuery for interactivity -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --accent: #4f46e5;
+            --muted: #6b7280;
+            --card: #ffffff;
+            --bg: #f5f7fb;
+        }
+
+        body {
+            background: var(--bg);
+            font-family: Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+            color: #111827;
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg,#0f172a, #0b1220);
+            color: #e6eef8;
+            position: fixed;
+            padding: 1rem;
+        }
+
+        .logo {
+            font-weight: 700;
+            letter-spacing: .4px;
+            color: #fff;
+        }
+
+        .nav-item a {
+            color: rgba(255,255,255,0.85);
+            display: block;
+            padding: .55rem .6rem;
+            border-radius: .5rem;
+            margin-bottom: .2rem;
+            text-decoration: none;
+        }
+
+            .nav-item a.active, .nav-item a:hover {
+                background: rgba(255,255,255,0.06);
+                color: #fff;
+            }
+
+        main {
+            margin-left: 260px;
+            padding: 1.4rem;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-compact {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 6px 18px rgba(12,15,30,0.06);
+        }
+
+        .agent-pill {
+            display: inline-flex;
+            gap: .5rem;
+            align-items: center;
+            padding: .25rem .6rem;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: var(--accent);
+            font-weight: 600;
+            margin-right: .5rem;
+            font-size: .86rem;
+        }
+
+        .chip {
+            font-size: .8rem;
+            padding: .2rem .5rem;
+            border-radius: 6px;
+            background: #f3f4f6;
+            color: var(--muted);
+        }
+
+        .timeline {
+            font-size: .9rem;
+            color: var(--muted);
+            max-height: 220px;
+            overflow: auto;
+            padding-right: .6rem;
+        }
+
+        .progress-agent {
+            height: 10px;
+            border-radius: 999px;
+            background: #eef2ff;
+            overflow: hidden;
+        }
+
+        .agent-step {
+            height: 100%;
+            background: linear-gradient(90deg,var(--accent),#7c3aed);
+            width: 0%;
+            transition: width .8s ease;
+        }
+
+        .kbd {
+            background: #111827;
+            color: white;
+            padding: .15rem .4rem;
+            border-radius: 6px;
+            font-size: .8rem;
+        }
+
+        table.data-table th, table.data-table td {
+            vertical-align: middle;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: .5rem;
+        }
+
+        .status-open {
+            background: #ef4444;
+        }
+
+        .status-inprogress {
+            background: #f59e0b;
+        }
+
+        .status-done {
+            background: #10b981;
+        }
+
+        .agent-log {
+            font-family: monospace;
+            font-size: .85rem;
+            color: #0f172a;
+            background: #f8fafc;
+            padding: .6rem;
+            border-radius: 8px;
+        }
+
+        footer {
+            margin-top: 2rem;
+            color: var(--muted);
+            font-size: .85rem;
+        }
+        /* responsive */
+        @media (max-width:900px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            main {
+                margin-left: 0;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar d-flex flex-column">
+        <div class="mb-4">
+            <div class="logo mb-2">HR • Multi-Agent</div>
+            <div class="text-muted small">Azure-style prototype — HR use case</div>
+        </div>
+
+        <nav class="mt-3">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a href="#" class="nav-link active" data-tab="dashboard">Dashboard</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-tab="tickets">Employee Tickets</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-tab="recruitment">Recruitment</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-tab="voice">Voice Support</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-tab="audits">Audits & QA</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-tab="orchestration">Orchestration</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-tab="settings">Settings</a></li>
+            </ul>
+        </nav>
+
+        <div class="mt-auto pt-3 small">
+            <div class="chip mb-2">Agents: Classification · Sentiment · Summariser · KB · Draft</div>
+            <div class="chip">Last deploy: <strong class="ms-1">Sep 24, 2025</strong></div>
+        </div>
+    </aside>
+
+    <main>
+        <div class="topbar">
+            <div>
+                <h4 style="margin:0">HR Multi-Agent Platform</h4>
+                <div class="text-muted small">Use case: HR — employee support, recruitment, audits</div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <div class="text-end me-2">
+                    <div class="small text-muted">Welcome,</div>
+                    <div><strong>HR Ops</strong></div>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" id="simulateAll">Simulate Ticket Flow</button>
+                <div class="badge bg-light text-dark">v0.9 prototype</div>
+            </div>
+        </div>
+
+        <!-- TABS/Views -->
+        <section id="view-area">
+
+            <!-- DASHBOARD -->
+            <div class="view" id="dashboard">
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="card-compact">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="text-muted small">Open Tickets</div>
+                                    <h3 id="openCount">8</h3>
+                                </div>
+                                <div class="text-end">
+                                    <div class="agent-pill">Multi-Agent</div>
+                                    <div class="small text-muted">Avg handle: <strong id="avgHandle">4.2m</strong></div>
+                                </div>
+                            </div>
+
+                            <hr />
+                            <div class="small text-muted">Recent processing</div>
+                            <div class="mt-2 timeline" id="timeline">
+                                <!-- timeline filled by jQuery -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card-compact">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="text-muted small">Audit Coverage</div>
+                                    <h3 id="auditCoverage">100%</h3>
+                                </div>
+                                <div class="text-end">
+                                    <div class="chip">QA: AI-first</div>
+                                </div>
+                            </div>
+
+                            <hr />
+                            <div class="small text-muted">KPI snapshot</div>
+                            <div class="mt-2">
+                                <div class="mb-2 small">CSAT (employee) <span class="float-end"><strong>84%</strong></span></div>
+                                <div class="progress mb-2"><div class="progress-bar" role="progressbar" style="width:84%"></div></div>
+
+                                <div class="mb-2 small">Auto-resolve rate <span class="float-end"><strong>26%</strong></span></div>
+                                <div class="progress mb-2"><div class="progress-bar bg-success" role="progressbar" style="width:26%"></div></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card-compact">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="text-muted small">Recruitment funnel</div>
+                                    <h3 id="funnelTop">42 candidates</h3>
+                                </div>
+                                <div class="text-end">
+                                    <div class="chip">Open reqs: 5</div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="small text-muted">Top actions</div>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-outline-primary me-2" id="openRecruit">Open Pipeline</button>
+                                <button class="btn btn-sm btn-outline-secondary" id="runAuditDemo">Run Audit Demo</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent Pipeline demo card -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card-compact">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>Ticket Processing — Multi-Agent Pipeline (Interactive)</strong>
+                                <div><span class="chip">Agents run in AutoGen style</span></div>
+                            </div>
+
+                            <div class="row gy-3">
+                                <div class="col-md-6">
+                                    <div class="mb-2 text-muted small">Selected Ticket</div>
+                                    <div class="agent-log" id="ticketContent">
+                                        Employee: "I need to correct my payroll for last month. My tax exemptions were not applied and my net salary is lower. Please advise how this will be corrected."
+                                    </div>
+                                    <div class="mt-3">
+                                        <button class="btn btn-primary btn-sm" id="startPipeline">Start Agent Pipeline</button>
+                                        <button class="btn btn-outline-secondary btn-sm" id="resetPipeline">Reset</button>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="small text-muted">Pipeline Progress</div>
+                                    <div class="mt-2">
+                                        <div class="mb-2">Micro-task progress</div>
+                                        <div class="progress-agent mb-2"><div class="agent-step" id="agentProgress"></div></div>
+                                        <div id="pipelineSteps" class="small text-muted">
+                                            <!-- steps get appended -->
+                                        </div>
+                                        <hr />
+                                        <div class="small text-muted mb-1">Agent Output</div>
+                                        <pre id="agentOutput" class="agent-log">Awaiting run...</pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TICKETS -->
+            <div class="view d-none" id="tickets">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card-compact mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>Employee Tickets</strong>
+                                <div><button class="btn btn-sm btn-outline-primary" id="newTicketBtn">New Ticket</button></div>
+                            </div>
+                            <div class="mt-3">
+                                <table class="table table-sm data-table">
+                                    <thead>
+                                        <tr><th>Ref</th><th>Employee</th><th>Subject</th><th>Priority</th><th>Status</th><th>Action</th></tr>
+                                    </thead>
+                                    <tbody id="ticketList">
+                                        <!-- sample rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card-compact">
+                            <strong>Quick Filters</strong>
+                            <div class="mt-2 d-grid gap-2">
+                                <button class="btn btn-outline-secondary btn-sm" id="filterOpen">Open</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="filterAI">Processed by AI</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="exportCSV">Export CSV</button>
+                            </div>
+                        </div>
+
+                        <div class="card-compact mt-3">
+                            <strong>Selected ticket details</strong>
+                            <div id="selectedTicketDetail" class="mt-2 small text-muted">None selected</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECRUITMENT -->
+            <div class="view d-none" id="recruitment">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card-compact">
+                            <strong>Recruitment Pipeline</strong>
+                            <div class="mt-2 small text-muted">Candidates by stage</div>
+                            <div class="row mt-3 g-3">
+                                <div class="col-md-3">
+                                    <div class="card p-2">
+                                        <div class="small text-muted">Applied</div>
+                                        <h5 id="candApplied">24</h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card p-2">
+                                        <div class="small text-muted">Screening (AI)</div>
+                                        <h5 id="candScreen">10</h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card p-2">
+                                        <div class="small text-muted">Interview</div>
+                                        <h5 id="candInterview">6</h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card p-2">
+                                        <div class="small text-muted">Offer</div>
+                                        <h5 id="candOffer">2</h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr />
+                            <div class="small text-muted">Candidate shortlist (AI recommendations)</div>
+                            <table class="table table-sm mt-2">
+                                <thead><tr><th>Name</th><th>Score</th><th>Role</th><th></th></tr></thead>
+                                <tbody id="candidateList">
+                                    <!-- filled by jQuery -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card-compact">
+                            <strong>Actions</strong>
+                            <div class="mt-2 d-grid gap-2">
+                                <button class="btn btn-primary btn-sm" id="autoScreen">Run Auto-screen</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="exportCandidates">Export shortlist</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VOICE -->
+            <div class="view d-none" id="voice">
+                <div class="card-compact">
+                    <div class="d-flex justify-content-between">
+                        <strong>Voice Support (Simulated)</strong>
+                        <div><span class="chip">Virtual Assistant stage</span></div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="small text-muted">Simulated call transcript</div>
+                            <pre id="callTranscript" class="agent-log">[08:32] Employee: "My payslip is incorrect for August. Who do I contact?"</pre>
+                            <div class="mt-2">
+                                <button class="btn btn-primary btn-sm" id="simulateCall">Run virtual assistant</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="small text-muted">AI Assistant Actions</div>
+                            <div id="voiceActions" class="mt-2 timeline"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AUDITS -->
+            <div class="view d-none" id="audits">
+                <div class="card-compact">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong>Auditing Dashboard</strong>
+                        <div><button class="btn btn-outline-primary btn-sm" id="runFullAudit">Run Audit on last 5 items</button></div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="small text-muted">Audit Results</div>
+                            <table class="table table-sm mt-2">
+                                <thead><tr><th>Ref</th><th>Summary</th><th>Sentiment</th><th>Compliance</th></tr></thead>
+                                <tbody id="auditResults"></tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="small text-muted">Selected audit detail</div>
+                            <div id="auditDetail" class="mt-2 agent-log">No selection</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORCHESTRATION -->
+            <div class="view d-none" id="orchestration">
+                <div class="card-compact">
+                    <strong>Orchestration & Agent Config</strong>
+                    <div class="mt-2 small text-muted">Agent run order (dragging disabled in prototype)</div>
+                    <div class="mt-3">
+                        <ul class="list-group">
+                            <li class="list-group-item">1. Ingest & classification <span class="float-end badge bg-secondary">Enabled</span></li>
+                            <li class="list-group-item">2. Sentiment analysis <span class="float-end badge bg-secondary">Enabled</span></li>
+                            <li class="list-group-item">3. Knowledge lookup (KB) <span class="float-end badge bg-secondary">Enabled</span></li>
+                            <li class="list-group-item">4. Draft reply generator <span class="float-end badge bg-secondary">Enabled</span></li>
+                            <li class="list-group-item">5. Compliance check <span class="float-end badge bg-secondary">Enabled</span></li>
+                        </ul>
+                    </div>
+                    <hr />
+                    <div class="small text-muted">Runtime controls</div>
+                    <div class="mt-2 d-flex gap-2">
+                        <button class="btn btn-success btn-sm" id="toggleAuto">Toggle Auto-Processing (ON)</button>
+                        <button class="btn btn-outline-danger btn-sm" id="pauseAgents">Pause Agents</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETTINGS -->
+            <div class="view d-none" id="settings">
+                <div class="card-compact">
+                    <strong>Settings & Security</strong>
+                    <div class="mt-2 small text-muted">Identity: Microsoft Entra (simulated)</div>
+                    <div class="mt-3">
+                        <div class="mb-2 small">Content safety / policy grounding</div>
+                        <textarea class="form-control" rows="4" id="policyBox">Ground all replies to knowledge base; escalate PHI or payroll changes to human approver.</textarea>
+                        <div class="mt-2"><button class="btn btn-primary btn-sm" id="savePolicy">Save</button></div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <footer>
+            Prototype — HR Multi-Agent Platform demo. Not connected to live services. Built for UX + orchestration concept.
+        </footer>
+
+        <!-- Modals -->
+        <div class="modal fade" id="ticketModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="ticketForm">
+                        <div class="modal-header"><h5 class="modal-title">New Ticket</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                        <div class="modal-body">
+                            <div class="mb-2"><label class="form-label">Employee</label><input class="form-control" name="employee" required></div>
+                            <div class="mb-2"><label class="form-label">Subject</label><input class="form-control" name="subject" required></div>
+                            <div class="mb-2"><label class="form-label">Message</label><textarea class="form-control" name="message" rows="4" required></textarea></div>
+                            <div class="mb-2"><label class="form-label">Priority</label><select class="form-select" name="priority"><option>Low</option><option>Medium</option><option selected>High</option></select></div>
+                        </div>
+                        <div class="modal-footer"><button type="submit" class="btn btn-primary">Create</button><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        $(function () {
+
+            // -------------------------
+            // Sample data
+            // -------------------------
+            const tickets = [
+                { ref: 'TCK-1001', emp: 'Priya N', subject: 'Payslip mismatch', priority: 'High', status: 'Open', aiProcessed: false, message: 'Net pay lower for Aug — missing tax exemption' },
+                { ref: 'TCK-1002', emp: 'Kamal R', subject: 'Leave balance query', priority: 'Low', status: 'In Progress', aiProcessed: true, message: 'Balance shows 8 days but I used 10' },
+                { ref: 'TCK-1003', emp: 'Maya S', subject: 'Policy clarification', priority: 'Medium', status: 'Open', aiProcessed: false, message: 'What is parental leave policy?' },
+                { ref: 'TCK-1004', emp: 'John D', subject: 'Laptop request', priority: 'Low', status: 'Done', aiProcessed: true, message: 'Requesting laptop for new joiner' }
+            ];
+
+            const candidates = [
+                { name: 'Asha Patel', score: 89, role: 'SWE' },
+                { name: 'Olu O.', score: 76, role: 'HRBP' },
+                { name: 'Mubarak K', score: 82, role: 'SWE' }
+            ];
+
+            const timelineLog = [
+                'Agent: classification completed for TCK-1001',
+                'Agent: sentiment -> negative (employee frustration)',
+                'Agent: KB lookup found payroll article',
+                'Draft generated and queued for human approval'
+            ];
+
+            // -------------------------
+            // Init UI
+            // -------------------------
+            function renderTicketList(filter) {
+                const tbody = $('#ticketList').empty();
+                tickets.forEach(t => {
+                    if (filter === 'open' && t.status !== 'Open') return;
+                    if (filter === 'ai' && !t.aiProcessed) return;
+                    const tr = $('<tr>');
+                    tr.append(`<td>${t.ref}</td>`);
+                    tr.append(`<td>${t.emp}</td>`);
+                    tr.append(`<td>${t.subject}</td>`);
+                    tr.append(`<td>${t.priority}</td>`);
+                    const st = `<td><span class="status-dot ${t.status === 'Open' ? 'status-open' : (t.status === 'In Progress' ? 'status-inprogress' : 'status-done')}"></span>${t.status}${t.aiProcessed ? ' <span class="badge bg-info text-dark ms-1">AI</span>' : ''}</td>`;
+                    tr.append(st);
+                    tr.append(`<td><button class="btn btn-sm btn-outline-secondary viewTicket" data-ref="${t.ref}">Open</button></td>`);
+                    tbody.append(tr);
+                });
+            }
+
+            function renderCandidates() {
+                const tbody = $('#candidateList').empty();
+                candidates.forEach(c => {
+                    const scoreColor = c.score > 80 ? 'text-success' : c.score > 70 ? 'text-warning' : 'text-muted';
+                    tbody.append(`<tr><td>${c.name}</td><td class="${scoreColor}">${c.score}</td><td>${c.role}</td><td><button class="btn btn-sm btn-outline-primary selectCand">Shortlist</button></td></tr>`);
+                });
+            }
+
+            function renderTimeline() {
+                const t = $('#timeline').empty();
+                timelineLog.slice().reverse().forEach(l => {
+                    t.append(`<div class="mb-2"><strong>•</strong> ${l}</div>`);
+                });
+            }
+
+            renderTicketList();
+            renderCandidates();
+            renderTimeline();
+
+            // -------------------------
+            // Tab nav
+            // -------------------------
+            $('.nav-link').on('click', function (e) {
+                e.preventDefault();
+                $('.nav-link').removeClass('active');
+                $(this).addClass('active');
+                const tab = $(this).data('tab');
+                $('.view').addClass('d-none');
+                $('#' + tab).removeClass('d-none');
+            });
+
+            // -------------------------
+            // Ticket modal
+            // -------------------------
+            const ticketModal = new bootstrap.Modal($('#ticketModal')[0]);
+            $('#newTicketBtn').on('click', () => ticketModal.show());
+            $('#ticketForm').on('submit', function (e) {
+                e.preventDefault();
+                const data = Object.fromEntries(new FormData(this).entries());
+                const ref = 'TCK-' + (1000 + tickets.length + 1);
+                tickets.unshift({ ref, emp: data.employee, subject: data.subject, priority: data.priority, status: 'Open', aiProcessed: false, message: data.message });
+                ticketModal.hide();
+                renderTicketList();
+                $('#openCount').text(tickets.filter(t => t.status === 'Open').length);
+                timelineLog.push(`Human created ${ref} — queued for AI micro-tasks`);
+                renderTimeline();
+            });
+
+            // view ticket
+            $(document).on('click', '.viewTicket', function () {
+                const ref = $(this).data('ref');
+                const t = tickets.find(x => x.ref === ref);
+                $('#selectedTicketDetail').html(`<strong>${t.ref}</strong><div class="small text-muted">${t.emp} · ${t.priority}</div><pre class="agent-log mt-2">${t.message}</pre>`);
+                $('.nav-link').removeClass('active');
+                $(`.nav-link[data-tab="tickets"]`).addClass('active');
+                $('.view').addClass('d-none'); $('#tickets').removeClass('d-none');
+            });
+
+            // quick filters
+            $('#filterOpen').on('click', () => renderTicketList('open'));
+            $('#filterAI').on('click', () => renderTicketList('ai'));
+            $('#exportCSV').on('click', () => {
+                // export current tickets to CSV (simple)
+                const csv = ['ref,employee,subject,priority,status,aiProcessed', ...tickets.map(t => `${t.ref},"${t.emp}","${t.subject}",${t.priority},${t.status},${t.aiProcessed}`)].join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' }); const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = 'tickets.csv'; a.click(); URL.revokeObjectURL(url);
+            });
+
+            // -------------------------
+            // Pipeline simulation
+            // -------------------------
+            const pipelineSteps = [
+                { id: 'classify', label: 'Classification' },
+                { id: 'sentiment', label: 'Sentiment Analysis' },
+                { id: 'kb', label: 'Knowledge Base Lookup' },
+                { id: 'summ', label: 'Summarisation' },
+                { id: 'draft', label: 'Draft Reply' },
+                { id: 'compliance', label: 'Compliance Check' }
+            ];
+
+            function resetPipeline() {
+                $('#agentProgress').css('width', '0%');
+                $('#pipelineSteps').empty();
+                pipelineSteps.forEach(s => $('#pipelineSteps').append(`<div class="mb-1"><strong>${s.label}:</strong> <span class="text-muted" id="step-${s.id}">pending</span></div>`));
+                $('#agentOutput').text('Awaiting run...');
+            }
+
+            resetPipeline();
+
+            let autoProcessing = true;
+
+            $('#startPipeline').on('click', function () {
+                const total = pipelineSteps.length;
+                let i = 0;
+                $('#agentOutput').text('');
+                function runNext() {
+                    if (i >= total) {
+                        // mark done
+                        $('#timeline').prepend(`<div class="mb-2"><strong>•</strong> Pipeline completed for demo ticket</div>`);
+                        timelineLog.push('Pipeline finished (demo)');
+                        renderTimeline();
+                        return;
+                    }
+                    const s = pipelineSteps[i];
+                    $(`#step-${s.id}`).text('running...');
+                    // animate progress
+                    const pct = Math.round(((i + 1) / total) * 100);
+                    $('#agentProgress').css('width', pct + '%');
+                    // simulate varying work durations
+                    const duration = 700 + Math.random() * 1200;
+                    setTimeout(() => {
+                        $(`#step-${s.id}`).text('done');
+                        $('#agentOutput').append(`[${s.label}] — output generated\n`);
+                        timelineLog.push(`Agent:${s.label} completed`);
+                        renderTimeline();
+                        i++;
+                        runNext();
+                    }, duration);
+                }
+                runNext();
+            });
+
+            $('#resetPipeline').on('click', resetPipeline);
+            $('#simulateAll').on('click', function () {
+                // simulate creating a ticket and running pipeline
+                $('.nav-link').removeClass('active'); $(`.nav-link[data-tab="dashboard"]`).addClass('active');
+                $('.view').addClass('d-none'); $('#dashboard').removeClass('d-none');
+                timelineLog.push('Simulate: new payroll ticket ingested; agents started');
+                renderTimeline();
+                $('#startPipeline').click();
+            });
+
+            // -------------------------
+            // Candidate actions
+            // -------------------------
+            $('#openRecruit').on('click', function () {
+                $('.nav-link').removeClass('active'); $(`.nav-link[data-tab="recruitment"]`).addClass('active');
+                $('.view').addClass('d-none'); $('#recruitment').removeClass('d-none');
+            });
+
+            $('#autoScreen').on('click', function () {
+                // run a fake screening pass and update candidate scores
+                candidates.forEach(c => {
+                    c.score = Math.min(95, c.score + Math.floor(Math.random() * 8));
+                });
+                renderCandidates();
+                timelineLog.push('Recruitment agent: auto-screening completed (demo)');
+                renderTimeline();
+            });
+
+            $('#exportCandidates').on('click', function () {
+                alert('Exported shortlist (demo).');
+            });
+
+            // -------------------------
+            // Voice assistant simulation
+            // -------------------------
+            $('#simulateCall').on('click', function () {
+                const seq = [
+                    { msg: 'STT: transcribed call', time: 600 },
+                    { msg: 'Agent: classified as payroll inquiry', time: 800 },
+                    { msg: 'Agent: sentiment neutral -> employee seeking info', time: 700 },
+                    { msg: 'Agent: KB hit -> payroll FAQ article', time: 800 },
+                    { msg: 'Agent: suggested reply -> "Please raise an HR case with payroll team; attach payslip."', time: 900 }
+                ];
+                $('#voiceActions').empty();
+                let idx = 0;
+                function next() {
+                    if (idx >= seq.length) return;
+                    $('#voiceActions').append('<div class="mb-2 small">' + seq[idx].msg + '</div>');
+                    idx++;
+                    setTimeout(next, seq[idx - 1].time);
+                }
+                next();
+            });
+
+            // -------------------------
+            // Auditing (multi-agent)
+            // -------------------------
+            $('#runAuditDemo').on('click', function () {
+                $('.nav-link').removeClass('active'); $(`.nav-link[data-tab="audits"]`).addClass('active');
+                $('.view').addClass('d-none'); $('#audits').removeClass('d-none');
+                $('#runFullAudit').click();
+            });
+
+            $('#runFullAudit').on('click', function () {
+                const auditTbody = $('#auditResults').empty();
+                // take last 5 tickets or sample
+                const sample = tickets.slice(0, 5);
+                sample.forEach((t, i) => {
+                    // simulate multi-agent outputs
+                    const summary = `${t.subject} — ${t.message.slice(0, 50)}...`;
+                    const sentiment = (t.message.toLowerCase().includes('error') || t.message.toLowerCase().includes('mismatch') || t.priority === 'High') ? 'Negative' : 'Neutral';
+                    const compliance = (t.subject.toLowerCase().includes('payslip') ? 'Review payroll change' : 'OK');
+                    const tr = $(`<tr data-idx="${i}"><td>${t.ref}</td><td>${summary}</td><td>${sentiment}</td><td>${compliance}</td></tr>`);
+                    auditTbody.append(tr);
+                });
+            });
+
+            $(document).on('click', '#auditResults tr', function () {
+                const idx = $(this).data('idx');
+                const t = tickets[idx];
+                $('#auditDetail').text(`Summary:\n${t.subject}\n\nAgent flags:\n- Sentiment: ${(t.priority === 'High' ? 'Negative' : 'Neutral')}\n- Compliance: ${t.subject.toLowerCase().includes('payslip') ? 'Escalate to payroll approver' : 'OK'}`);
+            });
+
+            // -------------------------
+            // Orchestration toggles
+            // -------------------------
+            $('#toggleAuto').on('click', function () {
+                autoProcessing = !autoProcessing;
+                $(this).text('Toggle Auto-Processing (' + (autoProcessing ? 'ON' : 'OFF') + ')');
+                timelineLog.push(`Auto-Processing toggled ${autoProcessing ? 'ON' : 'OFF'}`);
+                renderTimeline();
+            });
+            $('#pauseAgents').on('click', function () {
+                timelineLog.push('All agents paused (demo)');
+                renderTimeline();
+            });
+
+            // -------------------------
+            // Save policy
+            // -------------------------
+            $('#savePolicy').on('click', function () {
+                const p = $('#policyBox').val();
+                timelineLog.push('Policy updated: ' + p.slice(0, 40) + '...');
+                renderTimeline();
+                alert('Policy saved (demo).');
+            });
+
+            // -------------------------
+            // Misc / initial counts
+            // -------------------------
+            $('#openCount').text(tickets.filter(t => t.status === 'Open').length);
+            $('#funnelTop').text(candidates.length + ' candidates');
+            $('#candApplied').text(24);
+            $('#candScreen').text(10);
+            $('#candInterview').text(6);
+            $('#candOffer').text(2);
+
+            // prefill ticket list
+            renderTicketList();
+
+        });
+    </script>
+
+</body>
+</html>

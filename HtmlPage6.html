@@ -1,0 +1,852 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI HR CRM | Multi-Agent HR Platform</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --accent: #06b6d4;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            color: var(--dark);
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--dark);
+            color: white;
+            padding: 1.5rem 1rem;
+            position: fixed;
+            width: 250px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            padding: 0.5rem;
+        }
+
+        .logo-icon {
+            background: var(--primary);
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+            padding: 0 0.5rem;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+            .nav-links li {
+                margin-bottom: 0.5rem;
+            }
+
+            .nav-links a {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.75rem;
+                color: #cbd5e1;
+                text-decoration: none;
+                border-radius: 8px;
+                transition: all 0.3s;
+            }
+
+                .nav-links a:hover, .nav-links a.active {
+                    background: var(--primary);
+                    color: white;
+                }
+
+        /* Main Content */
+        .main-content {
+            grid-column: 2;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+            .header h1 {
+                color: var(--dark);
+                font-size: 1.8rem;
+            }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: var(--primary-dark);
+            }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+            .card-header h3 {
+                color: var(--dark);
+                font-size: 1.2rem;
+            }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .kpi-card {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Agent Status */
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: var(--light);
+            border-radius: 8px;
+        }
+
+            .agent-status.online {
+                border-left: 4px solid var(--success);
+            }
+
+            .agent-status.offline {
+                border-left: 4px solid var(--gray);
+            }
+
+            .agent-status.busy {
+                border-left: 4px solid var(--warning);
+            }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .status-online {
+            background: var(--success);
+        }
+
+        .status-offline {
+            background: var(--gray);
+        }
+
+        .status-busy {
+            background: var(--warning);
+        }
+
+        /* Candidate List */
+        .candidate-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .candidate-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+            .candidate-item:hover {
+                background: var(--light);
+            }
+
+        .candidate-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .candidate-info {
+            flex: 1;
+        }
+
+        .candidate-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .candidate-role {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .candidate-score {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Workflow Simulator */
+        .workflow-simulator {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .workflow-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+            .workflow-steps::before {
+                content: '';
+                position: absolute;
+                top: 20px;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: #e2e8f0;
+                z-index: 1;
+            }
+
+        .workflow-step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .workflow-step.active .step-circle {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .workflow-step.completed .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        /* Chat Interface */
+        .chat-interface {
+            background: white;
+            border-radius: 12px;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+
+            .message.ai {
+                background: var(--light);
+                margin-right: auto;
+            }
+
+            .message.human {
+                background: var(--primary);
+                color: white;
+                margin-left: auto;
+            }
+
+        .chat-input {
+            padding: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+            .chat-input input {
+                flex: 1;
+                padding: 0.75rem;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+            }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+            .tab.active {
+                border-bottom-color: var(--primary);
+                color: var(--primary);
+                font-weight: 600;
+            }
+
+        .tab-content {
+            display: none;
+        }
+
+            .tab-content.active {
+                display: block;
+            }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">HR</div>
+            AI HR CRM
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Main</div>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-tab="dashboard">📊 Dashboard</a></li>
+                <li><a href="#" data-tab="candidates">👥 Candidates</a></li>
+                <li><a href="#" data-tab="workflow">🔄 Workflow</a></li>
+                <li><a href="#" data-tab="agents">🤖 AI Agents</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">AI Agents</div>
+            <ul class="nav-links">
+                <li><a href="#" data-agent="screening">📄 Resume Screening</a></li>
+                <li><a href="#" data-agent="coordinator">📅 Interview Coordinator</a></li>
+                <li><a href="#" data-agent="policy">📋 Policy Advisor</a></li>
+                <li><a href="#" data-agent="compliance">⚖️ Compliance Monitor</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Settings</div>
+            <ul class="nav-links">
+                <li><a href="#">⚙️ System Settings</a></li>
+                <li><a href="#">🔒 Security</a></li>
+                <li><a href="#">📈 Analytics</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Tab -->
+        <div class="tab-content active" id="dashboard-tab">
+            <div class="header">
+                <h1>HR Dashboard</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="simulateWorkflow">Simulate AI Workflow</button>
+                    <button class="btn btn-primary" id="addCandidate">Add Candidate</button>
+                </div>
+            </div>
+
+            <!-- KPI Overview -->
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Recruitment Metrics</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-value" id="timeToHire">5.2</div>
+                                <div>Days to Hire</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-value" id="candidateSatisfaction">84%</div>
+                                <div>Candidate Satisfaction</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-value" id="costReduction">38%</div>
+                                <div>Cost Reduction</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-value" id="autoScreening">100%</div>
+                                <div>Auto Screening</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>AI Agent Status</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="agent-status online">
+                            <div class="status-indicator status-online"></div>
+                            <div class="agent-info">
+                                <strong>Resume Screening Agent</strong>
+                                <div>Processing 12 resumes</div>
+                            </div>
+                        </div>
+                        <div class="agent-status busy">
+                            <div class="status-indicator status-busy"></div>
+                            <div class="agent-info">
+                                <strong>Interview Coordinator</strong>
+                                <div>Scheduling 5 interviews</div>
+                            </div>
+                        </div>
+                        <div class="agent-status online">
+                            <div class="status-indicator status-online"></div>
+                            <div class="agent-info">
+                                <strong>Policy Advisor</strong>
+                                <div>Answering employee queries</div>
+                            </div>
+                        </div>
+                        <div class="agent-status online">
+                            <div class="status-indicator status-online"></div>
+                            <div class="agent-info">
+                                <strong>Compliance Monitor</strong>
+                                <div>Auditing HR processes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Candidates -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Top Candidates</h3>
+                </div>
+                <div class="card-body">
+                    <div class="candidate-list" id="candidateList">
+                        <!-- Candidates will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Candidates Tab -->
+        <div class="tab-content" id="candidates-tab">
+            <div class="header">
+                <h1>Candidate Management</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="bulkProcess">Bulk Process with AI</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div id="candidateManagement">
+                        <!-- Candidate management interface -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow Tab -->
+        <div class="tab-content" id="workflow-tab">
+            <div class="header">
+                <h1>AI Workflow Simulator</h1>
+            </div>
+
+            <div class="workflow-simulator">
+                <h3>Recruitment Process: Traditional vs AI-Driven</h3>
+
+                <div class="workflow-steps">
+                    <div class="workflow-step completed" data-step="1">
+                        <div class="step-circle">1</div>
+                        <div>Resume Screening</div>
+                    </div>
+                    <div class="workflow-step active" data-step="2">
+                        <div class="step-circle">2</div>
+                        <div>Interview Scheduling</div>
+                    </div>
+                    <div class="workflow-step" data-step="3">
+                        <div class="step-circle">3</div>
+                        <div>Background Check</div>
+                    </div>
+                    <div class="workflow-step" data-step="4">
+                        <div class="step-circle">4</div>
+                        <div>Offer Management</div>
+                    </div>
+                    <div class="workflow-step" data-step="5">
+                        <div class="step-circle">5</div>
+                        <div>Onboarding</div>
+                    </div>
+                </div>
+
+                <div class="workflow-controls">
+                    <button class="btn btn-primary" id="startWorkflow">Start AI Workflow</button>
+                    <button class="btn" id="resetWorkflow">Reset</button>
+                </div>
+
+                <div class="workflow-log" id="workflowLog" style="margin-top: 2rem; padding: 1rem; background: var(--light); border-radius: 8px; max-height: 200px; overflow-y: auto;">
+                    <h4>AI Agent Activity Log</h4>
+                    <div id="activityLog"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Agents Tab -->
+        <div class="tab-content" id="agents-tab">
+            <div class="header">
+                <h1>AI Agent Management</h1>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Resume Screening Agent</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Analyzes resumes against job requirements using Azure OpenAI</p>
+                        <div style="margin-top: 1rem;">
+                            <strong>Status:</strong> <span class="status-online" style="color: var(--success);">● Online</span>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" data-agent-chat="screening">
+                            Chat with Agent
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Interview Coordinator</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Automatically schedules interviews and sends notifications</p>
+                        <div style="margin-top: 1rem;">
+                            <strong>Status:</strong> <span class="status-busy" style="color: var(--warning);">● Busy</span>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" data-agent-chat="coordinator">
+                            Chat with Agent
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Interface -->
+        <div class="chat-interface" id="chatInterface">
+            <div class="card-header">
+                <h3 id="chatAgentName">AI Agent Chat</h3>
+                <button class="btn" id="closeChat">✕</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    Hello! I'm your AI HR assistant. How can I help you today?
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type your message...">
+                <button class="btn btn-primary" id="sendMessage">Send</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Sample candidate data
+            const candidates = [
+                { id: 1, name: "Sarah Johnson", role: "Software Engineer", score: 92, status: "Screened", avatar: "SJ" },
+                { id: 2, name: "Mike Chen", role: "Product Manager", score: 88, status: "Interview", avatar: "MC" },
+                { id: 3, name: "Emily Davis", role: "UX Designer", score: 95, status: "Screened", avatar: "ED" },
+                { id: 4, name: "David Wilson", role: "Data Scientist", score: 85, status: "New", avatar: "DW" },
+                { id: 5, name: "Lisa Brown", role: "HR Specialist", score: 90, status: "Offer", avatar: "LB" }
+            ];
+
+            // Initialize candidate list
+            function initializeCandidates() {
+                const candidateList = $('#candidateList');
+                candidateList.empty();
+
+                candidates.forEach(candidate => {
+                    const candidateItem = `
+                            <div class="candidate-item" data-candidate-id="${candidate.id}">
+                                <div class="candidate-avatar">${candidate.avatar}</div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">${candidate.name}</div>
+                                    <div class="candidate-role">${candidate.role}</div>
+                                </div>
+                                <div class="candidate-score">${candidate.score}%</div>
+                            </div>
+                        `;
+                    candidateList.append(candidateItem);
+                });
+            }
+
+            // Tab navigation
+            $('.nav-links a[data-tab]').on('click', function (e) {
+                e.preventDefault();
+                const tabId = $(this).data('tab') + '-tab';
+
+                $('.nav-links a').removeClass('active');
+                $(this).addClass('active');
+
+                $('.tab-content').removeClass('active');
+                $('#' + tabId).addClass('active');
+            });
+
+            // Agent chat
+            $('[data-agent-chat]').on('click', function () {
+                const agentType = $(this).data('agent-chat');
+                let agentName = '';
+
+                switch (agentType) {
+                    case 'screening':
+                        agentName = 'Resume Screening Agent';
+                        break;
+                    case 'coordinator':
+                        agentName = 'Interview Coordinator';
+                        break;
+                    case 'policy':
+                        agentName = 'Policy Advisor';
+                        break;
+                    case 'compliance':
+                        agentName = 'Compliance Monitor';
+                        break;
+                }
+
+                $('#chatAgentName').text(agentName);
+                $('#chatInterface').show();
+            });
+
+            // Close chat
+            $('#closeChat').on('click', function () {
+                $('#chatInterface').hide();
+            });
+
+            // Send message
+            $('#sendMessage').on('click', function () {
+                const message = $('#chatInput').val().trim();
+                if (message) {
+                    // Add human message
+                    $('#chatMessages').append(`
+                            <div class="message human">${message}</div>
+                        `);
+
+                    // Clear input
+                    $('#chatInput').val('');
+
+                    // Simulate AI response
+                    setTimeout(() => {
+                        const responses = [
+                            "I've analyzed the resume and found a 92% match with the job requirements.",
+                            "I've scheduled the interview for tomorrow at 2:00 PM with the hiring manager.",
+                            "Based on company policy, this candidate qualifies for our standard benefits package.",
+                            "I've completed the compliance check and found no issues with this candidate."
+                        ];
+                        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+                        $('#chatMessages').append(`
+                                <div class="message ai">${randomResponse}</div>
+                            `);
+
+                        // Scroll to bottom
+                        $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+                    }, 1000);
+                }
+            });
+
+            // Simulate workflow
+            $('#startWorkflow').on('click', function () {
+                const steps = $('.workflow-step');
+                const log = $('#activityLog');
+                log.empty();
+
+                steps.removeClass('completed active');
+
+                // Step 1: Resume Screening
+                setTimeout(() => {
+                    steps.eq(0).addClass('completed');
+                    log.append('<div>✅ Resume Screening Agent: Analyzing 15 resumes...</div>');
+                    log.append('<div>✅ Found 8 qualified candidates (53% match rate)</div>');
+                }, 1000);
+
+                // Step 2: Interview Scheduling
+                setTimeout(() => {
+                    steps.eq(1).addClass('completed');
+                    steps.eq(2).addClass('active');
+                    log.append('<div>✅ Interview Coordinator: Scheduled 5 interviews automatically</div>');
+                    log.append('<div>✅ Sent calendar invites and reminders</div>');
+                }, 3000);
+
+                // Step 3: Background Check
+                setTimeout(() => {
+                    steps.eq(2).addClass('completed');
+                    steps.eq(3).addClass('active');
+                    log.append('<div>✅ Compliance Agent: Completed background checks</div>');
+                    log.append('<div>✅ All candidates passed compliance review</div>');
+                }, 5000);
+
+                // Step 4: Offer Management
+                setTimeout(() => {
+                    steps.eq(3).addClass('completed');
+                    steps.eq(4).addClass('active');
+                    log.append('<div>✅ Policy Agent: Generated offer letters</div>');
+                    log.append('<div>✅ Compliance review: All offers meet regulations</div>');
+                }, 7000);
+
+                // Step 5: Onboarding
+                setTimeout(() => {
+                    steps.eq(4).addClass('completed');
+                    log.append('<div>✅ Onboarding Agent: Initiated onboarding process</div>');
+                    log.append('<div>✅ System access configured, training scheduled</div>');
+                    log.append('<div>🎉 AI Workflow completed successfully!</div>');
+
+                    // Update KPIs
+                    $('#timeToHire').text('3.2');
+                    $('#candidateSatisfaction').text('91%');
+                    $('#costReduction').text('42%');
+                }, 9000);
+            });
+
+            // Add candidate
+            $('#addCandidate').on('click', function () {
+                const newCandidate = {
+                    id: candidates.length + 1,
+                    name: "New Candidate",
+                    role: "Open Position",
+                    score: Math.floor(Math.random() * 30) + 70,
+                    status: "New",
+                    avatar: "NC"
+                };
+
+                candidates.push(newCandidate);
+                initializeCandidates();
+
+                // Simulate AI processing
+                $('#activityLog').prepend('<div>🤖 Resume Screening Agent: Analyzing new candidate...</div>');
+                setTimeout(() => {
+                    $('#activityLog').prepend(`<div>✅ Scored candidate at ${newCandidate.score}% match</div>`);
+                }, 1500);
+            });
+
+            // Initialize the CRM
+            initializeCandidates();
+        });
+    </script>
+</body>
+</html>
