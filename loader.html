@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Top Loader on Page Load</title>
+    <style>
+        /* Loader bar */
+        #top-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px; /* Thin, modern style */
+            background: linear-gradient(90deg, #4facfe, #00f2fe); /* Trendy gradient */
+            z-index: 9999;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="top-loader"></div>
+
+    <div style="height:2000px; padding:20px;">
+        <h2>Page Content</h2>
+        <p>Scroll down to see content.</p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+  // Start loader immediately
+  $(document).ready(function () {
+    $("#top-loader").css("width", "0%");
+    $("#top-loader").show().animate({ width: "80%" }, 1000); // load to 80%
+  });
+
+  // Complete loader when page fully loaded
+  $(window).on("load", function () {
+    $("#top-loader").animate({ width: "100%" }, 400, function () {
+      setTimeout(() => {
+        $("#top-loader").fadeOut(200, function(){
+          $(this).css("width", "0%");
+        });
+      }, 200);
+    });
+  });
+    </script>
+
+</body>
+</html>

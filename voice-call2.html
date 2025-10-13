@@ -1,0 +1,422 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI-Driven Contact-Center </title>
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+    <!--<link href="assets/css/icofont.css" rel="stylesheet" />-->
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/responsive.css" rel="stylesheet" />
+    <link href="assets/css/all.min.css" rel="stylesheet" />
+</head>
+<body>
+    <section class="topbar">
+        <div class="container-fluid">
+            <div class="row align-items-center gx-2">
+                <div class="col-auto d-block d-md-none d-lg-none">
+                    <a href="javascript:void()" id="toggleSidebar" class="text-white fs-5">
+                        <i class="fa-solid fa-bars"></i>
+                    </a>
+                </div>
+                <div class="col-auto">
+                    <div class="d-flex align-items-center">
+                        <img src="assets/img/svg/communication.svg" style="height:40px" />
+                        <span class="ms-2 fw-medium fs-6 text-white"> AI Contact Center </span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex justify-content-end">
+                        <div class="dropdown topDropdowns">
+                            <a class="" href="#" id="profileBtn" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span>
+                                    <i class="fa-regular fa-user"></i>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu bg-light shadow dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void()">
+                                        <i class="fa-regular fa-user"></i>
+                                        <span class="ms-2">demo@unifycloud.com</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void()">
+                                        <i class="fa-solid fa-diamond-turn-right"></i>
+                                        <span class="ms-2">Go to Admin Panel</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="login.html">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                        <span class="ms-2">Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="d-flex">
+        <nav id="sidebar" class="">
+            <div class="py-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <img src="assets/img/svg/bottom-view.svg" />
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="ticket-management.html" class="nav-link">
+                            <img src="assets/img/svg/ticket.svg" />
+                            <span>Tickets</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="voice-call.html" class="nav-link active">
+                            <img src="assets/img/svg/telecommunication.svg" />
+                            <span>Voice Calls</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="quality-audit.html" class="nav-link">
+                            <img src="assets/img/svg/search.svg" />
+                            <span>Qulity Audit</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <img src="assets/img/svg/ceo.svg" />
+                            <span>Agent Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <img src="assets/img/svg/pie-chart.svg" />
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <img src="assets/img/svg/settings.svg" />
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <!--<li class="nav-item"><a class="nav-link d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse" href="#usersMenu" role="button" aria-expanded="false" aria-controls="usersMenu"><span><i class="fa-solid fa-users"></i> Users</span><i class="fa-solid fa-chevron-down"></i></a><div class="collapse submenu" id="usersMenu"><ul class="nav flex-column"><li><a href="#" class="nav-link"><i class="fa-solid fa-user-plus"></i> Add User</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-user-gear"></i> Manage Users</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-user-shield"></i> User Roles</a></li></ul></div></li><li class="nav-item"><a class="nav-link d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse" href="#settingsMenu" role="button" aria-expanded="false" aria-controls="settingsMenu"><span><i class="fa-solid fa-gear"></i> Settings</span><i class="fa-solid fa-chevron-down"></i></a><div class="collapse submenu" id="settingsMenu"><ul class="nav flex-column"><li><a href="#" class="nav-link"><i class="fa-solid fa-sliders"></i> General</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-lock"></i> Security</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-bell"></i> Notifications</a></li></ul></div></li>-->
+                </ul>
+            </div>
+        </nav>
+        <div id="content" class="flex-grow-1">
+            <!--<button id="toggleSidebar" class="btn btn-primary mb-3"><i class="bi bi-list"></i> Toggle Sidebar
+                </button>-->
+            <div class="px-4 py-2 border-bottom">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="mb-0">Voice Calls</h5>
+                    </div>
+                    <div class="col">
+                        <div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-4 position-relative" id="dropArea" style="min-height:calc(100vh - 100px);display:block">
+                <div class="drop-overlay" id="drop-overlay">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drop your files here</p>
+                </div>
+
+                <div class="text-center pt-5 pb-4">
+                    <h4 class="animated-grad">AI-Driven Contact Center</h4>
+                    <h6>Upload files or record voice for intelligent analysis</h6>
+                </div>
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-8">
+                        <div class="py-4">
+                            <div>
+                                <div class="call-controls mb-4">
+                                    <div class="row justify-content-center">
+                                        <div class="col-auto">
+                                            <div>
+                                                <button class="btn btn-lg ripple-btn" id="startBtn">
+                                                    <span><i class="fa-solid fa-microphone"></i></span>
+                                                    <span>Start Recording</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-center my-5">
+                                        <div class="col-auto">
+                                            <div class="border-top" style="width:100px;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-auto text-center">
+                                            <div class="mb-2">
+                                                <button class="btn btn-outline-secondary btn-lg" id="browseBtn">
+                                                    <span><i class="fa-solid fa-arrow-up-from-bracket"></i></span>
+                                                    <span>Upload File</span>
+                                                </button>
+                                            </div>
+                                            <small class="text-body-secondary">You can drag and drop file also - <em>Supports only pdf and MP3</em></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Recording section-->
+            <div class="px-4" id="recordingSection" style="display:none">
+                <div class="text-center pt-3 pb-4">
+                    <h4 class="animated-grad">AI-Driven Contact Center</h4>
+                    <h6>Recording your voice</h6>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div>
+                            <div class="visualizer">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                            </div>
+
+                            <div class="text-center">
+                                <div class="timer fs-3 fw-light mb-2" id="timer">00:00</div>
+
+                                <button id="stopBtn" class="btn ripple-btn pulse">
+                                    <i class="fa-solid fa-stop"></i>
+                                    <span>Stop Recording</span>
+                                </button>
+
+                                <button id="muteBtn" class="btn btn-outline-secondary">
+                                    <i class="fa-solid fa-volume-xmark"></i>
+                                    <span>Mute</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="my-3">
+                            <textarea id="transcript" class="form-control" placeholder="Your transcript will appear here..."></textarea>
+                        </div>
+                        <div id="status" class="mb-2"></div>
+                        <div class="text-center">
+                            <button id="cancelBtn" class="btn btn-outline-secondary">
+                                <i class="fa-solid fa-xmark"></i>
+                                <span>Cancel</span>
+                            </button>
+                            <button id="submitBtn" class="btn btn-success">
+                                <i class="fa-solid fa-check"></i>
+                                <span>Submit</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!--File Preview section-->
+            <div class="px-4" id="filePreview" style="display:none">
+                <div class="text-center pt-5 pb-4">
+                    <h4 class="animated-grad">AI-Driven Contact Center</h4>
+                    <h6>Upload files for intelligent analysis</h6>
+                </div>
+                <div>
+                    <div>
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-md">
+                                        <div class="" id="attachments"></div>
+                                        <!--<span class="fw-medium text-body-secondary">jsdhfgkhsdfkjh.pdf <span class="text-body-tertiary">(1.2MB)</span></span>-->
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="javascript:void()" class="btn btn-outline-secondary"><i class="fa-solid fa-xmark"></i> Cancel</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="javascript:void()" class="btn ripple-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload</a>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="bg-white p-3 shadow-sm rounded-3" id="preview">
+                                            sdkjh
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="assets/js/jquery-3.7.1.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/voice.js"></script>
+    <script src="assets/js/recording.js"></script>
+
+    <script>
+        const profileDropdownBtn = document.getElementById('profileBtn');
+        new bootstrap.Dropdown(profileDropdownBtn, {
+            popperConfig: {
+                modifiers: [{
+                    name: 'offset',
+                    options: {
+                        offset: [0, 8] // move down by 48px
+                    }
+                }]
+            }
+        });
+
+    </script>
+    <script>
+        const dropArea = $('#dropArea');
+        const browseBtn = $('#browseBtn');
+        const filePreview = $('#filePreview');
+
+        const attachmentsContainer = $('#attachments');
+        const dropOverlay = $('#drop-overlay');
+
+        let attachments = [];
+
+        // Initialize with a file input (hidden)
+        const fileInput = $('<input type="file" id="file-input" style="display: none;">');
+        $('body').append(fileInput);
+
+        browseBtn.on('click', function () {
+            fileInput.click();
+        });
+
+        fileInput.on('change', function (e) {
+            handleFiles(e.target.files);
+            // Reset the file input to allow selecting the same file again
+            $(this).val('');
+        });
+
+        dropArea.on('dragover', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropArea.addClass('drop-active');
+            dropOverlay.addClass('active');
+        });
+        dropArea.on('dragleave', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Only remove if we're leaving the chat area, not entering a child element
+            if (!$(e.relatedTarget).closest('#dropArea').length) {
+                dropArea.removeClass('drop-active');
+                dropOverlay.removeClass('active');
+            }
+        });
+        dropArea.on('drop', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropArea.removeClass('drop-active');
+            dropOverlay.removeClass('active');
+            handleFiles(e.originalEvent.dataTransfer.files);
+        });
+        // Handle file processing
+        function handleFiles(files) {
+            dropArea.hide();
+            filePreview.show();
+            $("#preview").empty();
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                attachments.push(file);
+                debugger
+                const attachmentItem = $('<div class="attachment-item"></div>');
+                const fileSize = formatFileSize(file.size);
+
+                // Create FileReader for preview
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    let fileType = file.type;
+                    let previewContent = "";
+
+                    // Handle different file previews
+                    if (fileType.startsWith("image/")) {
+                        previewContent = `<img src="${event.target.result}" class="preview-img" alt="${file.name}">`;
+                    }
+                    else if (fileType === "application/pdf") {
+                        previewContent = `<embed src="${event.target.result}" type="application/pdf" class="preview-pdf" style="width:100%; min-height:500px;">`;
+                    }
+                    else if (fileType === "audio/mpeg") {
+                        previewContent = `
+                            <audio controls class="preview-audio">
+                                <source src="${event.target.result}" type="audio/mpeg">
+                                Your browser does not support audio playback.
+                            </audio>`;
+                    }
+                    else {
+                        previewContent = `<div class="no-preview">📄 No preview available</div>`;
+                    }
+
+                    // Build HTML for each file
+                    attachmentItem.html(`
+
+                            <div class="attachment-info">
+                                <span class="attachment-name">${file.name}</span>
+                                <span class="attachment-size">${fileSize}</span>
+                            </div>
+                            <i class="fas fa-times remove-attachment"></i>
+                        `);
+                    $("#preview").append(previewContent);
+                    // Handle remove action
+                    attachmentItem.find('.remove-attachment').on('click', function () {
+                        const index = attachments.indexOf(file);
+                        if (index > -1) {
+                            attachments.splice(index, 1);
+                        }
+                        attachmentItem.remove();
+                    });
+
+                    attachmentsContainer.append(attachmentItem);
+                };
+                reader.readAsDataURL(file);
+
+                //attachmentItem.html(`
+                //            <i class="fas fa-file"></i>
+                //            <div class="attachment-info">
+                //                <span class="attachment-name">${file.name}</span>
+                //                <span class="attachment-size">${fileSize}</span>
+                //            </div>
+                //            <i class="fas fa-times remove-attachment"></i>
+                //        `);
+
+                //attachmentItem.find('.remove-attachment').on('click', function () {
+                //    const index = attachments.indexOf(file);
+                //    if (index > -1) {
+                //        attachments.splice(index, 1);
+                //    }
+                //    attachmentItem.remove();
+                //});
+
+                //attachmentsContainer.append(attachmentItem);
+            }
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+    </script>
+
+</body>
+</html>

@@ -34,3 +34,21 @@ $(document).ready(function () {
         $(this).find("i.fa-chevron-down, i.fa-chevron-up").toggleClass("fa-chevron-down fa-chevron-up");
     });
 });
+
+//...Loader
+$(document).ready(function () {
+    $("#top-loader").css("width", "0%");
+    $("#top-loader").show().animate({ width: "80%" }, 1000); // load to 80%
+});
+
+// Complete loader when page fully loaded
+$(window).on("load", function () {
+    $("#top-loader").animate({ width: "100%" }, 400, function () {
+        setTimeout(() => {
+            $("#top-loader").fadeOut(200, function () {
+                $(this).css("width", "0%");
+            });
+        }, 200);
+    });
+});
+//End of loader

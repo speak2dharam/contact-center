@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Upload & Preview</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        .preview-box {
+            margin-top: 20px;
+        }
+
+            .preview-box img {
+                max-width: 200px;
+                margin: 10px;
+                border-radius: 10px;
+                border: 1px solid #ccc;
+            }
+
+        .file-info {
+            margin: 10px 0;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Attach File & Preview</h2>
+    <input type="file" id="fileInput" multiple>
+
+    <div class="preview-box" id="preview"></div>
+
+    <script>
+        $(document).ready(function () {
+            $("#fileInput").on("change", function (e) {
+                let files = e.target.files;
+                $("#preview").empty(); // clear previous previews
+
+                $.each(files, function (index, file) {
+                    let reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        let fileType = file.type;
+                        let previewItem = "";
+
+                        if (fileType.startsWith("image/")) {
+                            // Image preview
+                            previewItem = `<div>
+                    <img src="${event.target.result}" alt="${file.name}">
+                    <div class="file-info">${file.name} (${Math.round(file.size / 1024)} KB)</div>
+                  </div>`;
+                        } else {
+                            // Non-image file
+                            previewItem = `<div>
+                    <div class="file-info">📄 ${file.name} (${Math.round(file.size / 1024)} KB)</div>
+                  </div>`;
+                        }
+
+                        $("#preview").append(previewItem);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -3,143 +3,570 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel with Submenu</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
+    <title>Audio Recorder with Visualizer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-        }
-
-        /* Sidebar */
-        #sidebar {
-            min-width: 250px;
-            max-width: 250px;
-            background: #2c3e50;
-            color: #fff;
-            transition: all 0.3s;
-        }
-
-            #sidebar .nav-link {
-                color: #fff;
-                padding: 12px 20px;
-                display: block;
-            }
-
-                #sidebar .nav-link:hover {
-                    background: #34495e;
-                }
-
-            /* Submenu */
-            #sidebar .submenu .nav-link {
-                padding-left: 40px;
-                font-size: 14px;
-            }
-
-            /* Collapsed sidebar */
-            #sidebar.collapsed {
-                margin-left: -250px;
-            }
-
-        /* Content */
-        #content {
-            flex: 1;
-            padding: 20px;
-            background: #ecf0f1;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
             min-height: 100vh;
-            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .recorder-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
+
+        h1 {
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .status {
+            margin: 20px 0;
+            font-size: 18px;
+            font-weight: 500;
+            min-height: 27px;
+        }
+
+        .visualizer-container {
+            height: 200px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .visualizer {
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .bar {
+            width: 10px;
+            background: linear-gradient(to top, #ff416c, #ff4b2b);
+            border-radius: 5px 5px 0 0;
+            transition: height 0.1s ease;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+            .btn i {
+                margin-right: 8px;
+            }
+
+        .btn-record {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            padding: 15px 30px;
+        }
+
+        .btn-stop {
+            background: linear-gradient(to right, #1d976c, #93f9b9);
+            color: white;
+        }
+
+        .btn-mute {
+            background: linear-gradient(to right, #2193b0, #6dd5ed);
+            color: white;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(to right, #8e2de2, #4a00e0);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .timer {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 15px 0;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 65, 108, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(255, 65, 108, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 65, 108, 0);
+            }
+        }
+
+        .recording-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .audio-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: wave 2s linear infinite;
+        }
+
+        @keyframes wave {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .recording-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background-color: #ff416c;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: blink 1.5s infinite;
+        }
+
+        .visualizer-type {
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .vis-btn {
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .vis-btn.active {
+                background: rgba(255, 255, 255, 0.4);
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            }
     </style>
 </head>
 <body>
-    <div class="d-flex">
-        <!-- Sidebar -->
-        <nav id="sidebar" class="">
-            <div class="p-3">
-                <h4 class="text-center">Admin Panel</h4>
-                <ul class="nav flex-column mt-4">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Dashboard</a>
-                    </li>
+    <div class="recorder-container">
+        <h1>Audio Recorder</h1>
+        <div class="status">
+            <span class="recording-indicator hidden"></span>
+            <span id="statusText">Click Start to begin recording</span>
+        </div>
+        <div class="timer">00:00</div>
 
-                    <!-- Users with Submenu -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex justify-content-between align-items-center"
-                           data-bs-toggle="collapse" href="#usersMenu" role="button" aria-expanded="false" aria-controls="usersMenu">
-                            Users <i class="bi bi-chevron-down"></i>
-                        </a>
-                        <div class="collapse submenu" id="usersMenu">
-                            <ul class="nav flex-column">
-                                <li><a href="#" class="nav-link">Add User</a></li>
-                                <li><a href="#" class="nav-link">Manage Users</a></li>
-                                <li><a href="#" class="nav-link">User Roles</a></li>
-                            </ul>
-                        </div>
-                    </li>
-
-                    <!-- Settings with Submenu -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex justify-content-between align-items-center"
-                           data-bs-toggle="collapse" href="#settingsMenu" role="button" aria-expanded="false" aria-controls="settingsMenu">
-                            Settings <i class="bi bi-chevron-down"></i>
-                        </a>
-                        <div class="collapse submenu" id="settingsMenu">
-                            <ul class="nav flex-column">
-                                <li><a href="#" class="nav-link">General</a></li>
-                                <li><a href="#" class="nav-link">Security</a></li>
-                                <li><a href="#" class="nav-link">Notifications</a></li>
-                            </ul>
-                        </div>
-                    </li>
-
-                    <li class="nav-item"><a href="#" class="nav-link">Reports</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Logout</a></li>
-                </ul>
+        <div class="visualizer-container">
+            <div class="visualizer" id="visualizer">
+                <!-- Bars will be generated by JavaScript -->
             </div>
-        </nav>
+            <div class="audio-wave"></div>
+        </div>
 
-        <!-- Page Content -->
-        <div id="content" class="flex-grow-1">
-            <button id="toggleSidebar" class="btn btn-primary mb-3">
-                <i class="bi bi-list"></i> Toggle Sidebar
+        <div class="visualizer-type">
+            <button class="vis-btn active" data-type="bars">Bars</button>
+            <button class="vis-btn" data-type="circle">Circle</button>
+            <button class="vis-btn" data-type="wave">Wave</button>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-record pulse" id="startBtn">
+                Start Recording
             </button>
-            <h1 class="mb-4">Dashboard</h1>
+        </div>
 
-            <div class="card mb-3 p-3">
-                <h5>Welcome Back!</h5>
-                <p>This is your admin dashboard overview.</p>
-            </div>
-
-            <div class="card mb-3 p-3">
-                <h5>Statistics</h5>
-                <p>Some analytics or chart can go here.</p>
-            </div>
+        <div class="recording-controls hidden" id="recordingControls">
+            <button class="btn btn-stop" id="stopBtn">
+                Stop
+            </button>
+            <button class="btn btn-mute" id="muteBtn">
+                Mute
+            </button>
+            <button class="btn btn-cancel" id="cancelBtn">
+                Cancel
+            </button>
         </div>
     </div>
 
-    <!-- Bootstrap JS + jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
         $(document).ready(function () {
-            // Toggle sidebar collapse
-            $("#toggleSidebar").on("click", function () {
-                $("#sidebar").toggleClass("collapsed");
+            const startBtn = $('#startBtn');
+            const stopBtn = $('#stopBtn');
+            const muteBtn = $('#muteBtn');
+            const cancelBtn = $('#cancelBtn');
+            const recordingControls = $('#recordingControls');
+            const status = $('.status');
+            const statusText = $('#statusText');
+            const timer = $('.timer');
+            const visualizer = $('#visualizer');
+            const recordingIndicator = $('.recording-indicator');
+            const visButtons = $('.vis-btn');
+
+            let isRecording = false;
+            let isMuted = false;
+            let timerInterval;
+            let seconds = 0;
+            let minutes = 0;
+            let audioContext;
+            let analyser;
+            let microphone;
+            let javascriptNode;
+            let bars = [];
+            let visualizerType = 'bars';
+
+            // Create visualizer bars
+            function createBars() {
+                visualizer.empty();
+                bars = [];
+
+                if (visualizerType === 'bars') {
+                    visualizer.css('align-items', 'flex-end');
+                    visualizer.css('justify-content', 'center');
+                    visualizer.css('gap', '2px');
+
+                    for (let i = 0; i < 40; i++) {
+                        const bar = $('<div class="bar"></div>');
+                        visualizer.append(bar);
+                        bars.push(bar);
+                    }
+                } else if (visualizerType === 'circle') {
+                    visualizer.css('align-items', 'center');
+                    visualizer.css('justify-content', 'center');
+                    visualizer.css('gap', '2px');
+                    visualizer.css('border-radius', '50%');
+                    visualizer.css('transform', 'rotate(180deg)');
+
+                    for (let i = 0; i < 60; i++) {
+                        const bar = $('<div class="bar"></div>');
+                        bar.css('transform', `rotate(${i * 6}deg)`);
+                        bar.css('transform-origin', 'bottom center');
+                        visualizer.append(bar);
+                        bars.push(bar);
+                    }
+                } else if (visualizerType === 'wave') {
+                    visualizer.css('align-items', 'center');
+                    visualizer.css('justify-content', 'center');
+                    visualizer.css('gap', '0');
+
+                    for (let i = 0; i < 200; i++) {
+                        const bar = $('<div class="bar"></div>');
+                        bar.css('width', '2px');
+                        bar.css('border-radius', '1px');
+                        visualizer.append(bar);
+                        bars.push(bar);
+                    }
+                }
+            }
+
+            // Initialize with bars visualizer
+            createBars();
+
+            // Visualizer type buttons
+            visButtons.click(function () {
+                visButtons.removeClass('active');
+                $(this).addClass('active');
+                visualizerType = $(this).data('type');
+                createBars();
             });
 
-            // Rotate chevron icon on submenu toggle
-            $('#sidebar .nav-link[data-bs-toggle="collapse"]').on('click', function () {
-                $(this).find("i.bi").toggleClass("bi-chevron-down bi-chevron-up");
+            // Timer functions
+            function startTimer() {
+                seconds = 0;
+                minutes = 0;
+                timerInterval = setInterval(function () {
+                    seconds++;
+                    if (seconds >= 60) {
+                        seconds = 0;
+                        minutes++;
+                    }
+
+                    const formattedTime =
+                        (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                        (seconds < 10 ? '0' + seconds : seconds);
+
+                    timer.text(formattedTime);
+                }, 1000);
+            }
+
+            function stopTimer() {
+                clearInterval(timerInterval);
+            }
+
+            // Setup audio context and analyser
+            function setupAudio() {
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 256;
+
+                    // Create microphone stream
+                    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                        .then(function (stream) {
+                            microphone = audioContext.createMediaStreamSource(stream);
+                            javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+
+                            analyser.smoothingTimeConstant = 0.8;
+                            microphone.connect(analyser);
+                            analyser.connect(javascriptNode);
+                            javascriptNode.connect(audioContext.destination);
+
+                            javascriptNode.onaudioprocess = function () {
+                                if (!isRecording) return;
+
+                                const array = new Uint8Array(analyser.frequencyBinCount);
+                                analyser.getByteFrequencyData(array);
+
+                                // Update visualizer based on audio data
+                                updateVisualizer(array);
+                            };
+                        })
+                        .catch(function (err) {
+                            console.error('Error accessing microphone:', err);
+                            statusText.text('Microphone access denied. Using simulated audio.');
+                            // Fallback to simulated audio
+                            simulateAudio();
+                        });
+                } catch (e) {
+                    console.error('Web Audio API not supported:', e);
+                    statusText.text('Web Audio API not supported. Using simulated audio.');
+                    simulateAudio();
+                }
+            }
+
+            // Fallback for when Web Audio API is not available
+            function simulateAudio() {
+                let simInterval;
+
+                startBtn.click(function () {
+                    if (!isRecording) {
+                        isRecording = true;
+                        startBtn.addClass('hidden');
+                        recordingControls.removeClass('hidden').addClass('fade-in');
+                        statusText.text('Recording... (Simulated)');
+                        recordingIndicator.removeClass('hidden');
+                        startTimer();
+                        startBtn.removeClass('pulse');
+
+                        // Simulate audio data
+                        simInterval = setInterval(function () {
+                            const array = new Uint8Array(128);
+                            for (let i = 0; i < array.length; i++) {
+                                array[i] = Math.floor(Math.random() * 100) + 20;
+                            }
+                            updateVisualizer(array);
+                        }, 100);
+                    }
+                });
+
+                // Update button handlers for simulated audio
+                stopBtn.click(function () {
+                    isRecording = false;
+                    clearInterval(simInterval);
+                    recordingControls.addClass('hidden');
+                    startBtn.removeClass('hidden');
+                    statusText.text('Recording saved successfully!');
+                    recordingIndicator.addClass('hidden');
+                    stopTimer();
+                    startBtn.text('Start Recording').addClass('pulse');
+                    timer.text('00:00');
+                    resetVisualizer();
+                });
+
+                cancelBtn.click(function () {
+                    isRecording = false;
+                    clearInterval(simInterval);
+                    recordingControls.addClass('hidden');
+                    startBtn.removeClass('hidden');
+                    statusText.text('Recording cancelled');
+                    recordingIndicator.addClass('hidden');
+                    stopTimer();
+                    startBtn.text('Start Recording').addClass('pulse');
+                    timer.text('00:00');
+                    resetVisualizer();
+                });
+            }
+
+            // Update visualizer based on audio data
+            function updateVisualizer(array) {
+                if (visualizerType === 'bars') {
+                    for (let i = 0; i < bars.length; i++) {
+                        const value = array[i % array.length] / 2;
+                        bars[i].css('height', value + 'px');
+                    }
+                } else if (visualizerType === 'circle') {
+                    for (let i = 0; i < bars.length; i++) {
+                        const value = array[i % array.length] / 2;
+                        bars[i].css('height', value + 'px');
+                    }
+                } else if (visualizerType === 'wave') {
+                    for (let i = 0; i < bars.length; i++) {
+                        const value = array[i % array.length] / 4;
+                        bars[i].css('height', value + 'px');
+                    }
+                }
+            }
+
+            function resetVisualizer() {
+                bars.forEach(bar => {
+                    bar.css('height', '5px');
+                });
+            }
+
+            // Button event handlers
+            startBtn.click(function () {
+                if (!isRecording) {
+                    isRecording = true;
+                    startBtn.addClass('hidden');
+                    recordingControls.removeClass('hidden').addClass('fade-in');
+                    statusText.text('Recording...');
+                    recordingIndicator.removeClass('hidden');
+                    startTimer();
+                    startBtn.removeClass('pulse');
+
+                    // Start audio processing if not already started
+                    if (!audioContext) {
+                        setupAudio();
+                    }
+                }
             });
+
+            stopBtn.click(function () {
+                isRecording = false;
+                recordingControls.addClass('hidden');
+                startBtn.removeClass('hidden');
+                statusText.text('Recording saved successfully!');
+                recordingIndicator.addClass('hidden');
+                stopTimer();
+                startBtn.text('Start Recording').addClass('pulse');
+                timer.text('00:00');
+                resetVisualizer();
+            });
+
+            muteBtn.click(function () {
+                isMuted = !isMuted;
+                if (isMuted) {
+                    muteBtn.text('Unmute');
+                    statusText.text('Recording muted...');
+                } else {
+                    muteBtn.text('Mute');
+                    statusText.text('Recording...');
+                }
+            });
+
+            cancelBtn.click(function () {
+                isRecording = false;
+                recordingControls.addClass('hidden');
+                startBtn.removeClass('hidden');
+                statusText.text('Recording cancelled');
+                recordingIndicator.addClass('hidden');
+                stopTimer();
+                startBtn.text('Start Recording').addClass('pulse');
+                timer.text('00:00');
+                resetVisualizer();
+            });
+
+            // Initialize audio on page load
+            setupAudio();
         });
     </script>
 </body>

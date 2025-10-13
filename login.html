@@ -43,7 +43,7 @@
                     </div>
                     <div class="bg-white rounded-2 shadow p-2">
                         <div class="bg-white rounded-2 py-2 px-3">
-                            <form id="login-form">
+                            <form id="login-form" class="logForms">
                                 <div class="mb-3 text-center">
                                     <h3 class="mb-1 fs-5">AI Contact Center</h3>
                                     <p class="mb-0 fw-medium text-body-secondary">Sign in to your account</p>
@@ -70,10 +70,30 @@
                                     <button type="submit" class="btn w-100 ripple-btn">Sign In</button>
                                 </div>
                                 <div class="text-center mt-3">
-                                    <a href="#" class="text-muted small">Forgot your password?</a>
+                                    <a href="javascript:void()" onclick="toggleLogin()" class="text-muted small">Forgot your password?</a>
                                 </div>
                                 <div class="mt-4 pt-3 border-top text-center">
                                     <small class="text-muted">By signing in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></small>
+                                </div>
+                            </form>
+                            <form id="forgot-form" class="logForms" style="display:none">
+                                <div class="mb-3 text-center">
+                                    <h3 class="mb-1 fs-5">AI Contact Center</h3>
+                                    <p class="mb-0 fw-medium text-body-secondary">Forgot password?</p>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label fw-medium">Email address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="email2"><i class="fa-regular fa-user"></i></span>
+                                        <input type="email" id="email" required class="form-control" placeholder="Enter your email" aria-label="Username" aria-describedby="basic-addon1">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <button type="submit" class="btn w-100 ripple-btn">Reset Password  </button>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="javascript:void()" onclick="toggleLogin()" class="text-muted small">Back to login?</a>
                                 </div>
                             </form>
                         </div>
@@ -86,6 +106,9 @@
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/main.js?v1.1"></script>
     <script>
+        function toggleLogin() {
+            $(".logForms").toggle();
+        }
         $(document).ready(function () {
             $('#login-form').submit(function (e) {
                 e.preventDefault();
