@@ -3,498 +3,370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Recording Interface</title>
+    <title>Change Password</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 20px 0;
         }
 
-        .recorder-container {
+        .password-container {
             background-color: white;
-            border-radius: 20px;
+            border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            width: 100%;
+            overflow: hidden;
             max-width: 500px;
-            padding: 30px;
+            width: 100%;
+        }
+
+        .password-header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 25px;
             text-align: center;
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-weight: 600;
+        .password-body {
+            padding: 30px;
         }
 
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
-        }
-
-        .recording-controls {
-            margin-bottom: 25px;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
+        .password-toggle {
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 5px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
         }
 
-        .btn-primary {
-            background-color: #4a6ee0;
-            color: white;
-            box-shadow: 0 4px 15px rgba(74, 110, 224, 0.3);
+        .password-strength {
+            height: 5px;
+            margin-top: 8px;
+            border-radius: 5px;
+            transition: all 0.3s;
         }
 
-            .btn-primary:hover {
-                background-color: #3a5ecf;
-                transform: translateY(-2px);
-            }
-
-        .btn-danger {
-            background-color: #e74c3c;
-            color: white;
-            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        .strength-weak {
+            background-color: #dc3545;
+            width: 25%;
         }
 
-            .btn-danger:hover {
-                background-color: #c0392b;
-                transform: translateY(-2px);
-            }
-
-        .btn-secondary {
-            background-color: #95a5a6;
-            color: white;
+        .strength-medium {
+            background-color: #ffc107;
+            width: 50%;
         }
 
-            .btn-secondary:hover {
-                background-color: #7f8c8d;
-                transform: translateY(-2px);
-            }
-
-        .btn-success {
-            background-color: #2ecc71;
-            color: white;
-        }
-
-            .btn-success:hover {
-                background-color: #27ae60;
-                transform: translateY(-2px);
-            }
-
-        .timer {
-            font-size: 36px;
-            font-weight: 700;
-            color: #333;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-        }
-
-        .transcript-container {
-            margin: 25px 0;
-            text-align: left;
-        }
-
-        textarea {
+        .strength-strong {
+            background-color: #198754;
             width: 100%;
-            height: 150px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 15px;
-            font-size: 16px;
-            resize: vertical;
-            transition: border-color 0.3s;
         }
 
-            textarea:focus {
-                outline: none;
-                border-color: #4a6ee0;
+        .requirement-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+            .requirement-list li {
+                margin-bottom: 8px;
+                font-size: 14px;
             }
 
-        .action-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+        .requirement-met {
+            color: #198754;
         }
 
-        .status {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #666;
-            min-height: 20px;
+        .requirement-unmet {
+            color: #6c757d;
         }
 
-        .icon {
-            margin-right: 8px;
-            font-size: 18px;
+        .btn-change-password {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
         }
 
-        .hidden {
+            .btn-change-password:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            }
+
+        .form-control:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25);
+        }
+
+        .alert-success {
             display: none;
-        }
-
-        .pulse {
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
-            }
-
-            70% {
-                transform: scale(1.05);
-                box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
-            }
-
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
-            }
-        }
-
-        .visualizer {
-            height: 80px;
-            width: 100%;
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bar {
-            width: 6px;
-            height: 10px;
-            background: #4a6ee0;
-            margin: 0 2px;
-            border-radius: 3px;
-            animation: equalizer 1.5s ease infinite;
-        }
-
-            .bar:nth-child(1) {
-                animation-delay: 0s;
-            }
-
-            .bar:nth-child(2) {
-                animation-delay: 0.1s;
-            }
-
-            .bar:nth-child(3) {
-                animation-delay: 0.2s;
-            }
-
-            .bar:nth-child(4) {
-                animation-delay: 0.3s;
-            }
-
-            .bar:nth-child(5) {
-                animation-delay: 0.4s;
-            }
-
-            .bar:nth-child(6) {
-                animation-delay: 0.5s;
-            }
-
-            .bar:nth-child(7) {
-                animation-delay: 0.6s;
-            }
-
-            .bar:nth-child(8) {
-                animation-delay: 0.7s;
-            }
-
-        @keyframes equalizer {
-            0%, 100% {
-                height: 10px;
-            }
-
-            50% {
-                height: 60px;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="recorder-container">
-        <h1>Voice Recorder</h1>
-        <p class="subtitle">Click start to begin recording your voice</p>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="password-container">
+                    <div class="password-header">
+                        <h2><i class="fas fa-lock me-2"></i>Change Password</h2>
+                        <p class="mb-0">Create a strong and secure password</p>
+                    </div>
+                    <div class="password-body">
+                        <form id="changePasswordForm">
+                            <div class="mb-3">
+                                <label for="currentPassword" class="form-label">Current Password</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" id="currentPassword" required>
+                                    <span class="password-toggle" data-target="currentPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </span>
+                                </div>
+                                <div class="form-text text-danger" id="currentPasswordError" style="display: none;">
+                                    Current password is required
+                                </div>
+                            </div>
 
-        <div class="recording-controls">
-            <button id="startBtn" class="btn btn-primary">
-                <span class="icon">🎤</span> Start Recording
-            </button>
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" id="newPassword" required>
+                                    <span class="password-toggle" data-target="newPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </span>
+                                </div>
+                                <div class="password-strength" id="passwordStrength"></div>
+                                <div class="form-text text-danger" id="newPasswordError" style="display: none;">
+                                    New password is required
+                                </div>
+                            </div>
 
-            <div id="recordingControls" class="hidden">
-                <div class="visualizer">
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
-                    <div class="bar"></div>
+                            <div class="mb-4">
+                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                    <span class="password-toggle" data-target="confirmPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </span>
+                                </div>
+                                <div class="form-text text-danger" id="confirmPasswordError" style="display: none;">
+                                    Passwords do not match
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-change-password w-100 text-white" id="submitButton" disabled>
+                                Change Password
+                            </button>
+
+                            <div class="alert alert-success mt-3" id="successMessage" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>Password changed successfully!
+                            </div>
+                        </form>
+
+                        <div class="mt-4">
+                            <h5 class="mb-3">Password Requirements</h5>
+                            <ul class="requirement-list">
+                                <li id="req-length">
+                                    <i class="fas fa-circle me-2"></i>At least 8 characters
+                                </li>
+                                <li id="req-uppercase">
+                                    <i class="fas fa-circle me-2"></i>At least one uppercase letter
+                                </li>
+                                <li id="req-lowercase">
+                                    <i class="fas fa-circle me-2"></i>At least one lowercase letter
+                                </li>
+                                <li id="req-number">
+                                    <i class="fas fa-circle me-2"></i>At least one number
+                                </li>
+                                <li id="req-special">
+                                    <i class="fas fa-circle me-2"></i>At least one special character
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="timer" id="timer">00:00</div>
-
-                <button id="stopBtn" class="btn btn-danger pulse">
-                    <span class="icon">⏹️</span> Stop Recording
-                </button>
-
-                <button id="muteBtn" class="btn btn-secondary">
-                    <span class="icon">🔇</span> Mute
-                </button>
             </div>
         </div>
-
-        <div class="transcript-container">
-            <textarea id="transcript" placeholder="Your transcript will appear here..."></textarea>
-        </div>
-
-        <div id="actionButtons" class="action-buttons hidden">
-            <button id="cancelBtn" class="btn btn-secondary">
-                <span class="icon">❌</span> Cancel
-            </button>
-            <button id="submitBtn" class="btn btn-success">
-                <span class="icon">✅</span> Submit
-            </button>
-        </div>
-
-        <div class="status" id="status"></div>
     </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         $(document).ready(function () {
-            // Variables for recording functionality
-            let mediaRecorder;
-            let audioChunks = [];
-            let timerInterval;
-            let seconds = 0;
-            let isRecording = false;
-            let isMuted = false;
+            // Toggle password visibility
+            $('.password-toggle').click(function () {
+                const targetId = $(this).data('target');
+                const input = $('#' + targetId);
+                const icon = $(this).find('i');
 
-            // Speech recognition setup (for transcript)
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            let recognition;
-
-            if (SpeechRecognition) {
-                recognition = new SpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true;
-                recognition.lang = 'en-US';
-
-                recognition.onresult = function (event) {
-                    let transcript = '';
-                    for (let i = event.resultIndex; i < event.results.length; i++) {
-                        if (event.results[i].isFinal) {
-                            transcript += event.results[i][0].transcript;
-                        } else {
-                            transcript += event.results[i][0].transcript;
-                        }
-                    }
-                    $('#transcript').val($('#transcript').val() + transcript);
-                };
-
-                recognition.onerror = function (event) {
-                    console.error('Speech recognition error', event.error);
-                    $('#status').text('Speech recognition error: ' + event.error);
-                };
-            }
-            else
-            {
-                $('#status').text('Speech recognition not supported in this browser. Transcript will not work.');
-            }
-
-            // Start recording button click
-            $('#startBtn').click(function () {
-                startRecording();
-            });
-
-            // Stop recording button click
-            $('#stopBtn').click(function () {
-                stopRecording();
-            });
-
-            // Mute button click
-            $('#muteBtn').click(function () {
-                toggleMute();
-            });
-
-            // Cancel button click
-            $('#cancelBtn').click(function () {
-                cancelRecording();
-            });
-
-            // Submit button click
-            $('#submitBtn').click(function () {
-                submitRecording();
-            });
-
-            // Function to start recording
-            function startRecording() {
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    navigator.mediaDevices.getUserMedia({ audio: true })
-                        .then(function (stream) {
-                            // Hide start button, show recording controls
-                            $('#startBtn').addClass('hidden');
-                            $('#recordingControls').removeClass('hidden');
-                            $('#actionButtons').removeClass('hidden');
-
-                            // Start timer
-                            startTimer();
-
-                            // Start speech recognition
-                            if (recognition) {
-                                recognition.start();
-                            }
-
-                            // Set up media recorder
-                            mediaRecorder = new MediaRecorder(stream);
-                            mediaRecorder.start();
-                            isRecording = true;
-
-                            mediaRecorder.ondataavailable = function (event) {
-                                audioChunks.push(event.data);
-                            };
-
-                            $('#status').text('Recording in progress...');
-                        })
-                        .catch(function (err) {
-                            console.error('Error accessing microphone:', err);
-                            $('#status').text('Error accessing microphone: ' + err.message);
-                        });
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
                 } else {
-                    $('#status').text('getUserMedia not supported in this browser.');
+                    input.attr('type', 'password');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            // Check password strength
+            $('#newPassword').on('input', function () {
+                const password = $(this).val();
+                checkPasswordStrength(password);
+                validateForm();
+            });
+
+            // Real-time form validation
+            $('#currentPassword, #confirmPassword').on('input', function () {
+                validateForm();
+            });
+
+            // Form submission
+            $('#changePasswordForm').submit(function (e) {
+                e.preventDefault();
+
+                if (validateForm()) {
+                    // Simulate API call
+                    $('#submitButton').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Changing Password...');
+
+                    setTimeout(function () {
+                        $('#successMessage').show();
+                        $('#changePasswordForm')[0].reset();
+                        $('#passwordStrength').removeClass().css('width', '0');
+                        resetRequirements();
+                        $('#submitButton').prop('disabled', true).html('Change Password');
+
+                        setTimeout(function () {
+                            $('#successMessage').hide();
+                        }, 5000);
+                    }, 2000);
+                }
+            });
+
+            function checkPasswordStrength(password) {
+                let strength = 0;
+                const requirements = {
+                    length: false,
+                    uppercase: false,
+                    lowercase: false,
+                    number: false,
+                    special: false
+                };
+
+                // Check length
+                if (password.length >= 8) {
+                    strength += 20;
+                    requirements.length = true;
+                    $('#req-length').addClass('requirement-met').removeClass('requirement-unmet');
+                } else {
+                    $('#req-length').removeClass('requirement-met').addClass('requirement-unmet');
+                }
+
+                // Check uppercase
+                if (/[A-Z]/.test(password)) {
+                    strength += 20;
+                    requirements.uppercase = true;
+                    $('#req-uppercase').addClass('requirement-met').removeClass('requirement-unmet');
+                } else {
+                    $('#req-uppercase').removeClass('requirement-met').addClass('requirement-unmet');
+                }
+
+                // Check lowercase
+                if (/[a-z]/.test(password)) {
+                    strength += 20;
+                    requirements.lowercase = true;
+                    $('#req-lowercase').addClass('requirement-met').removeClass('requirement-unmet');
+                } else {
+                    $('#req-lowercase').removeClass('requirement-met').addClass('requirement-unmet');
+                }
+
+                // Check numbers
+                if (/[0-9]/.test(password)) {
+                    strength += 20;
+                    requirements.number = true;
+                    $('#req-number').addClass('requirement-met').removeClass('requirement-unmet');
+                } else {
+                    $('#req-number').removeClass('requirement-met').addClass('requirement-unmet');
+                }
+
+                // Check special characters
+                if (/[^A-Za-z0-9]/.test(password)) {
+                    strength += 20;
+                    requirements.special = true;
+                    $('#req-special').addClass('requirement-met').removeClass('requirement-unmet');
+                } else {
+                    $('#req-special').removeClass('requirement-met').addClass('requirement-unmet');
+                }
+
+                // Update strength indicator
+                const strengthBar = $('#passwordStrength');
+                strengthBar.removeClass();
+
+                if (password.length === 0) {
+                    strengthBar.css('width', '0');
+                } else if (strength <= 40) {
+                    strengthBar.addClass('strength-weak');
+                } else if (strength <= 80) {
+                    strengthBar.addClass('strength-medium');
+                } else {
+                    strengthBar.addClass('strength-strong');
                 }
             }
 
-            // Function to stop recording
-            function stopRecording() {
-                if (mediaRecorder && isRecording) {
-                    mediaRecorder.stop();
-                    isRecording = false;
+            function validateForm() {
+                let isValid = true;
 
-                    // Stop timer
-                    clearInterval(timerInterval);
-
-                    // Stop speech recognition
-                    if (recognition) {
-                        recognition.stop();
-                    }
-
-                    // Stop all audio tracks
-                    mediaRecorder.stream.getTracks().forEach(track => track.stop());
-
-                    $('#status').text('Recording stopped. You can now submit or cancel.');
-                }
-            }
-
-            // Function to toggle mute
-            function toggleMute() {
-                if (mediaRecorder && mediaRecorder.stream) {
-                    const audioTracks = mediaRecorder.stream.getAudioTracks();
-
-                    if (audioTracks.length > 0) {
-                        isMuted = !isMuted;
-                        audioTracks[0].enabled = !isMuted;
-
-                        if (isMuted) {
-                            $('#muteBtn').html('<i class="fa-solid fa-microphone"></i> <span>Unmute</span>');
-                            $('#status').text('Microphone is muted');
-                        } else {
-                            $('#muteBtn').html('<i class="fa-solid fa-microphone-slash"></i> <span>Mute</span>');
-                            $('#status').text('Microphone is unmuted');
-                        }
-                    }
-                }
-            }
-
-            // Function to start timer
-            function startTimer() {
-                seconds = 0;
-                timerInterval = setInterval(function () {
-                    seconds++;
-                    const minutes = Math.floor(seconds / 60);
-                    const remainingSeconds = seconds % 60;
-                    $('#timer').text(
-                        (minutes < 10 ? '0' : '') + minutes + ':' +
-                        (remainingSeconds < 10 ? '0' : '') + remainingSeconds
-                    );
-                }, 1000);
-            }
-
-            // Function to cancel recording
-            function cancelRecording() {
-                if (isRecording) {
-                    stopRecording();
+                // Current password validation
+                const currentPassword = $('#currentPassword').val();
+                if (currentPassword.length === 0) {
+                    $('#currentPasswordError').show();
+                    isValid = false;
+                } else {
+                    $('#currentPasswordError').hide();
                 }
 
-                // Reset UI
-                $('#recordingControls').addClass('hidden');
-                $('#actionButtons').addClass('hidden');
-                $('#startBtn').removeClass('hidden');
-                $('#transcript').val('');
-                $('#timer').text('00:00');
-                $('#status').text('Recording canceled');
-                $('#muteBtn').html('<span class="icon">🔇</span> Mute');
-                isMuted = false;
-
-                // Clear audio chunks
-                audioChunks = [];
-            }
-
-            // Function to submit recording
-            function submitRecording() {
-                if (isRecording) {
-                    stopRecording();
+                // New password validation
+                const newPassword = $('#newPassword').val();
+                if (newPassword.length === 0) {
+                    $('#newPasswordError').show();
+                    isValid = false;
+                } else {
+                    $('#newPasswordError').hide();
                 }
 
-                const transcript = $('#transcript').val();
-
-                if (transcript.trim() === '') {
-                    $('#status').text('No transcript to submit. Please record something first.');
-                    return;
+                // Confirm password validation
+                const confirmPassword = $('#confirmPassword').val();
+                if (confirmPassword !== newPassword) {
+                    $('#confirmPasswordError').show();
+                    isValid = false;
+                } else {
+                    $('#confirmPasswordError').hide();
                 }
 
-                // In a real application, you would send the audio and transcript to a server
-                $('#status').html('Recording submitted successfully!<br>Transcript: ' + transcript.substring(0, 100) + '...');
+                // Enable/disable submit button
+                if (isValid) {
+                    $('#submitButton').prop('disabled', false);
+                } else {
+                    $('#submitButton').prop('disabled', true);
+                }
 
-                // Reset UI after a delay
-                setTimeout(function () {
-                    $('#recordingControls').addClass('hidden');
-                    $('#actionButtons').addClass('hidden');
-                    $('#startBtn').removeClass('hidden');
-                    $('#transcript').val('');
-                    $('#timer').text('00:00');
-                    $('#muteBtn').html('<span class="icon">🔇</span> Mute');
-                    isMuted = false;
-                    audioChunks = [];
-                }, 3000);
+                return isValid;
             }
+
+            function resetRequirements() {
+                $('.requirement-list li').removeClass('requirement-met').addClass('requirement-unmet');
+            }
+
+            // Initialize requirements
+            resetRequirements();
         });
     </script>
 </body>
