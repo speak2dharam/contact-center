@@ -253,8 +253,8 @@
                                         <a href="javascript:void()" class="btn ripple-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload</a>
                                     </div>
                                     <div class="col-12">
-                                        <div class="bg-white p-3 shadow-sm rounded-3" id="preview">
-                                            sdkjh
+                                        <div class="bg-white p-3 shadow-sm rounded-3 text-center" id="preview">
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -351,22 +351,71 @@
                     let fileType = file.type;
                     let previewContent = "";
 
-                    // Handle different file previews
+                    // === FILE TYPE HANDLING ===
                     if (fileType.startsWith("image/")) {
+                        // 🖼️ Image preview
                         previewContent = `<img src="${event.target.result}" class="preview-img" alt="${file.name}">`;
                     }
                     else if (fileType === "application/pdf") {
+                        // 📄 PDF preview
                         previewContent = `<embed src="${event.target.result}" type="application/pdf" class="preview-pdf" style="width:100%; min-height:500px;">`;
                     }
-                    else if (fileType === "audio/mpeg") {
+                    else if (fileType.startsWith("audio/")) {
+                        // 🎵 Audio preview
                         previewContent = `
-                            <audio controls class="preview-audio">
-                                <source src="${event.target.result}" type="audio/mpeg">
-                                Your browser does not support audio playback.
-                            </audio>`;
+                    <audio controls class="preview-audio">
+                        <source src="${event.target.result}" type="${fileType}">
+                        Your browser does not support audio playback.
+                    </audio>`;
+                    }
+                    else if (fileType.startsWith("video/")) {
+                        // 🎬 Video preview
+                        previewContent = `
+                    <video controls class="preview-video">
+                        <source src="${event.target.result}" type="${fileType}">
+                        Your browser does not support video playback.
+                    </video>`;
+                    }
+                    else if (
+                        fileType === "text/plain" ||
+                        file.name.match(/\.(txt|csv|log|json)$/i)
+                    ) {
+                        // 📝 Text or CSV preview (first few lines)
+                        const textReader = new FileReader();
+                        textReader.onload = function (e) {
+                            const content = e.target.result.split('\n').slice(0, 5).join('<br>');
+                            attachmentItem.find('.preview-box').html(`<div class="preview-text">${content}</div>`);
+                        };
+                        textReader.readAsText(file);
+                        previewContent = `<div class="preview-text">Loading preview...</div>`;
+                    }
+                    else if (
+                        file.name.match(/\.(doc|docx)$/i)
+                    ) {
+                        // 🧾 Word file icon
+                        previewContent = `<div class="file-icon word">📘 Word Document</div>`;
+                    }
+                    else if (
+                        file.name.match(/\.(xls|xlsx)$/i)
+                    ) {
+                        // 📊 Excel file icon
+                        previewContent = `<div class="file-icon excel">📗 Excel Spreadsheet</div>`;
+                    }
+                    else if (
+                        file.name.match(/\.(ppt|pptx)$/i)
+                    ) {
+                        // 📈 PowerPoint file icon
+                        previewContent = `<div class="file-icon ppt">📙 PowerPoint Presentation</div>`;
+                    }
+                    else if (
+                        file.name.match(/\.(zip|rar|7z)$/i)
+                    ) {
+                        // 🗜️ Compressed file icon
+                        previewContent = `<div class="file-icon zip">🗜️ Compressed Archive</div>`;
                     }
                     else {
-                        previewContent = `<div class="no-preview">📄 No preview available</div>`;
+                        // ❔ Unknown type
+                        previewContent = `<div class="file-icon other">📄 Unknown file type</div>`;
                     }
 
                     // Build HTML for each file
