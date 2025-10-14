@@ -9,6 +9,7 @@
     <link href="assets/css/style.css" rel="stylesheet" />
     <link href="assets/css/responsive.css" rel="stylesheet" />
     <link href="assets/css/all.min.css" rel="stylesheet" />
+    <link href="assets/libs/flatpickr/flatpickr.min.css" rel="stylesheet" />
 </head>
 <body>
     <section class="topbar">
@@ -125,9 +126,9 @@
                     <div class="col">
                         <h5 class="mb-0">Quality Audit</h5>
                     </div>
-                    <div class="col">
+                    <div class="col-md-3">
                         <div>
-
+                            <input type="text" id="dateRange" class="form-control form-control-sm" placeholder="Select date range" />
                         </div>
                     </div>
                 </div>
@@ -169,12 +170,70 @@
                 <h6 class="mb-3">
                     Call Audits
                 </h6>
-                <div>
+                <div class="bg-white rounded-3 overflow-hidden p-2">
                     <div>
-                        <table>
-                            <tr>
-                                <td></td>
-                            </tr>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Call ID</th>
+                                    <th>Agent</th>
+                                    <th>Duration</th>
+                                    <th>Sentiment</th>
+                                    <th>Quality Score</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#78901</td>
+                                    <td>Mike Chen</td>
+                                    <td>04:32</td>
+                                    <td><span class="sentiment-indicator sentiment-negative"></span> Negative</td>
+                                    <td>
+                                        <div class="progress progress-thin">
+                                            <div class="progress-bar bg-warning" style="width: 65%"></div>
+                                        </div>
+                                        <small>65%</small>
+                                    </td>
+                                    <td><span class="badge bg-warning">Needs Review</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">Review</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#78900</td>
+                                    <td>Sarah Johnson</td>
+                                    <td>02:15</td>
+                                    <td><span class="sentiment-indicator sentiment-positive"></span> Positive</td>
+                                    <td>
+                                        <div class="progress progress-thin">
+                                            <div class="progress-bar bg-success" style="width: 92%"></div>
+                                        </div>
+                                        <small>92%</small>
+                                    </td>
+                                    <td><span class="badge bg-success">Approved</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#78899</td>
+                                    <td>Emma Davis</td>
+                                    <td>07:48</td>
+                                    <td><span class="sentiment-indicator sentiment-neutral"></span> Neutral</td>
+                                    <td>
+                                        <div class="progress progress-thin">
+                                            <div class="progress-bar bg-info" style="width: 88%"></div>
+                                        </div>
+                                        <small>88%</small>
+                                    </td>
+                                    <td><span class="badge bg-success">Approved</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -184,6 +243,7 @@
     <script src="assets/js/jquery-3.7.1.min.js"></script>
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
     <script>
         const profileDropdownBtn = document.getElementById('profileBtn');
         new bootstrap.Dropdown(profileDropdownBtn, {
@@ -195,6 +255,20 @@
                     }
                 }]
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date();
+            const lastWeek = new Date();
+            lastWeek.setDate(today.getDate() - 7);
+
+            flatpickr("#dateRange", {
+                mode: "range",                // enable range selection
+                dateFormat: "Y-m-d",          // format as YYYY-MM-DD
+                defaultDate: [lastWeek, today], // default: last 7 days
+                maxDate: "today"              // restrict to past dates only
+            });
         });
     </script>
 </body>
