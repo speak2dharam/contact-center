@@ -20,7 +20,7 @@
         ];
 
         // Reset all agents first
-        $('.agent-process').removeClass('active completed');
+        $('.agent-process').removeClass('active completed failed');
         $('.agent-process .badge').removeClass('bg-success bg-warning').addClass('bg-secondary').text('Pending');
 
         // Process each agent with delay
@@ -55,15 +55,15 @@
         ];
 
         // Reset all agents first
-        $('.agent-process').removeClass('active completed');
+        $('.agent-process').removeClass('active completed failed');
         $('.agent-process .badge').removeClass('bg-success bg-warning').addClass('bg-secondary').text('Pending');
 
         // Process each agent with delay
         agents.forEach((agentInfo, index) => {
             setTimeout(() => {
                 const agentElement = $(`.agent-process[data-agent="${agentInfo.agent}"]`);
-                agentElement.removeClass('active').addClass('completed');
-                agentElement.find('.badge').removeClass('bg-secondary bg-warning').addClass('bg-success').text('Completed');
+                agentElement.removeClass('active').addClass('failed');
+                agentElement.find('.badge').removeClass('bg-secondary bg-warning').addClass('bg-danger').text('Failed');
 
                 // Show final response after last agent
                 if (index === agents.length - 1) {

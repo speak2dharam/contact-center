@@ -763,11 +763,14 @@
         background: #d1f2eb;
         border-left: 4px solid var(--success);
     }
-
-.compact-badge {
-    font-size: 0.7rem;
-    padding: 0.25rem 0.5rem;
-}
+    .agent-process.failed {
+        background: #ffe7e7;
+        border: 1px solid #ffd5d5;
+    }
+        .compact-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
 
 .section-title {
     font-weight: 600;
