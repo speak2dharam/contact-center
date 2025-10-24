@@ -1,0 +1,137 @@
+body{
+	background:#fff;
+	background-size:100%;
+	overflow-y:auto;
+	overflow-x: hidden;
+	text-align:center;
+	font-family:arial;
+	margin:0px; position: relative;
+}
+:focus {
+outline: 0;
+}
+h2{
+	font-size:25px;
+	color:#000;
+}
+/* .map_cont img{ max-width: 950px; margin: 30px auto ;} */
+img{width:100%;}
+.laptop, .large, .small{display:none;}
+/*@media screen and (min-width: 1024px) and (max-width: 1149px) {
+   
+   .small{
+		display:none;
+		margin:0px auto;
+		}
+		
+    .laptop{
+		display:none;
+		margin:0px auto;
+		}
+		.large{
+		display:none;
+		}
+		.xl-large{
+		display:none;
+		}
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1380px) {
+    .small{
+		display:block;
+		margin:0px auto;
+		}
+	.laptop{
+		display:block;
+		margin:0px auto;
+		}
+		.large{
+		display:none;
+		}
+		.xl-large{
+		display:none;
+		}
+}
+@media screen and (min-width: 1580px) and (max-width: 1800px) {
+    
+	.small{
+		display:none;
+		margin:0px auto;
+		}
+		.laptop{
+		display:none;
+		}
+		.large{
+		display:block;
+		margin:0px auto;
+		}
+		.xl-large{
+		display:none;
+		}
+}*/
+@media screen and (min-width: 1024px) and (max-width: 2200px) {
+   .small{
+		display:none;
+		margin:0px auto;
+		}
+   
+    .laptop{
+		display:none;
+		}
+		.xl-large{
+		display:block;
+		margin:0px auto;
+		}
+		.large{
+		display:none;
+		}
+}
+
+.quick-nav{
+	position:fixed;
+	right: -263px;
+	top:76px;
+	border:1px solid #f19523;
+			transition:ease-in-out 0.5s;}
+	
+	.quick-nav ul {
+    margin: 0;
+    list-style: none;
+    text-align: left;
+    background: #fff;
+    padding: 0;
+    font-family: calibri;
+}
+
+	.quick-nav ul li{
+		display: table;
+    width: 100%;    max-width: 260px;
+}
+
+.quick-nav ul li a {
+	display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #000;
+    border-bottom: 1px solid #EDEDED;
+    background: rgba(241, 149, 35, 0.03);}
+
+.quick-nav ul li a:hover{
+	background:#EDEDED;}
+
+.quick-nav .toggle-btn {
+background: #f19523;
+    position: absolute;
+    left: -40px;
+    width: 40px;
+    height: 40px;
+    top: -1px;
+    font-weight: bold;
+    line-height: 40px;
+    color: #fff;
+	text-decoration:none;}
+	
+	
+	.quick-nav-slide{
+		right:0px;
+		transition:ease-in-out 0.5s;}
