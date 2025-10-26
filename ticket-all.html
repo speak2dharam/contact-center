@@ -1,0 +1,762 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI-Driven Contact-Center </title>
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+    <!--<link href="assets/css/icofont.css" rel="stylesheet" />-->
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/responsive.css" rel="stylesheet" />
+    <link href="assets/css/all.min.css" rel="stylesheet" />
+
+    <link href="assets/libs/datatable/datatables.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    <style>
+        .dt-paging a {
+            padding: 3px 9px;
+        }
+        .status-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .agent-transfer {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            padding: 40px 25px;
+            max-width: 300px;
+        }
+
+            .agent-transfer i {
+                font-size: 3rem;
+                color: #0056b3;
+                margin-bottom: 15px;
+            }
+
+        .ticket-card {
+            max-width: 600px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .ticket-header {
+            background-color: #a11212;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticket-body {
+            background-color: #fff;
+            padding: 25px;
+        }
+
+            .ticket-body h4 {
+                font-weight: 700;
+                margin-bottom: 15px;
+            }
+
+        .summary-box {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+            .summary-box .row + .row {
+                margin-top: 10px;
+            }
+    </style>
+</head>
+<body>
+    <section class="topbar">
+        <div class="container-fluid">
+            <div class="row align-items-center gx-2">
+                <div class="col-auto d-block d-md-none d-lg-none">
+                    <a href="javascript:void()" id="toggleSidebar" class="text-white fs-5">
+                        <i class="fa-solid fa-bars"></i>
+                    </a>
+                </div>
+                <div class="col-auto">
+                    <div class="d-flex align-items-center">
+                        <img src="assets/img/svg/communication.svg" style="height:40px" />
+                        <span class="ms-2 fw-medium fs-6 text-white"> AI Contact Center </span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex justify-content-end">
+                        <div class="dropdown topDropdowns">
+                            <a class="" href="#" id="profileBtn" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span>
+                                    <i class="fa-regular fa-user"></i>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu bg-light shadow dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void()">
+                                        <i class="fa-regular fa-user"></i>
+                                        <span class="ms-2">demo@unifycloud.com</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void()">
+                                        <i class="fa-solid fa-diamond-turn-right"></i>
+                                        <span class="ms-2">Go to Admin Panel</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="change-password.html">
+                                        <i class="fa-solid fa-key"></i>
+                                        <span class="ms-2">Change Password</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="login.html">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                        <span class="ms-2">Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="d-flex">
+        <nav id="sidebar" class="">
+            <div class="py-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <img src="assets/img/svg/bottom-view.svg" />
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="ticket-all.html" class="nav-link active">
+                            <img src="assets/img/svg/ticket.svg" />
+                            <span>Tickets</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="voice-call2.html" class="nav-link">
+                            <img src="assets/img/svg/telecommunication.svg" />
+                            <span>Voice Calls</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="quality-audit.html" class="nav-link">
+                            <img src="assets/img/svg/search.svg" />
+                            <span>Qulity Audit</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="agent-management.html" class="nav-link">
+                            <img src="assets/img/svg/ceo.svg" />
+                            <span>Agent Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <img src="assets/img/svg/pie-chart.svg" />
+                            <span>Security Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <img src="assets/img/svg/settings.svg" />
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <!--<li class="nav-item"><a class="nav-link d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse" href="#usersMenu" role="button" aria-expanded="false" aria-controls="usersMenu"><span><i class="fa-solid fa-users"></i> Users</span><i class="fa-solid fa-chevron-down"></i></a><div class="collapse submenu" id="usersMenu"><ul class="nav flex-column"><li><a href="#" class="nav-link"><i class="fa-solid fa-user-plus"></i> Add User</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-user-gear"></i> Manage Users</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-user-shield"></i> User Roles</a></li></ul></div></li><li class="nav-item"><a class="nav-link d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse" href="#settingsMenu" role="button" aria-expanded="false" aria-controls="settingsMenu"><span><i class="fa-solid fa-gear"></i> Settings</span><i class="fa-solid fa-chevron-down"></i></a><div class="collapse submenu" id="settingsMenu"><ul class="nav flex-column"><li><a href="#" class="nav-link"><i class="fa-solid fa-sliders"></i> General</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-lock"></i> Security</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-bell"></i> Notifications</a></li></ul></div></li>-->
+                </ul>
+            </div>
+        </nav>
+        <div id="content" class="flex-grow-1">
+            <!--<button id="toggleSidebar" class="btn btn-primary mb-3"><i class="bi bi-list"></i> Toggle Sidebar
+                </button>-->
+            <div class="px-4 py-2 border-bottom">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">All Tickets</h5>
+                    </div>
+                    <div class="col">
+                        <div class="d-flex justify-content-end">
+                            <a href="javascript:void()" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#newTcktModal"><i class="fa-solid fa-plus"></i> New Ticket</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="rounded-3 p-3 text-center text-white kpi-1">
+                            <i class="fas fa-inbox fa-lg mb-2"></i>
+                            <h3>142</h3>
+                            <p>Total Tickets</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="rounded-3 p-3 text-center text-white kpi-2">
+                            <i class="fas fa-clock fa-lg mb-2"></i>
+                            <h3>21</h3>
+                            <p>Pending</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="rounded-3 p-3 text-center text-white kpi-3">
+                            <i class="fas fa-user-check fa-lg mb-2"></i>
+                            <h3>87</h3>
+                            <p>Resolved</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="rounded-3 p-3 text-center text-white kpi-4">
+                            <i class="fas fa-exclamation-triangle fa-lg mb-2"></i>
+                            <h3>12</h3>
+                            <p>High Priority</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-4 mb-5">
+                <div class="row g-3">
+
+                    <div class="col-md">
+                        <div class="">
+                            <table id="ticketsTable" class="table table-hover mb-0" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width:100px" class="border-end">Ticket ID</th>
+                                        <th>Customer</th>
+                                        <th>Subject</th>
+                                        <th>Category</th>
+                                        <th>Source</th>
+                                        <th class="border-start border-end">Priority</th>
+                                        <th>Status</th>
+                                        <th>Agent</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Email Tickets -->
+                                    <tr class="priority-high">
+                                        <td class="border-end">#78901</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=John+Smith&background=0D8ABC&color=fff" class="avatar-sm me-2">
+                                                <div>
+                                                    <div class="fw-semibold">John Smith</div>
+                                                    <div class="ticket-meta">john.smith@email.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold">Urgent: Flight cancellation - need rebooking</div>
+                                            <div class="ticket-excerpt text-muted">My flight BA245 from LHR to JFK has been cancelled. Need immediate rebooking...</div>
+                                        </td>
+                                        <td>Flight Booking</td>
+                                        <td>
+                                            <span class="badge channel-badge bg-primary">
+                                                <i class="fas fa-envelope me-1"></i>Email
+                                            </span>
+                                        </td>
+                                        <td class="border-start border-end"><span class="badge bg-danger">High</span></td>
+                                        <td><span class="badge bg-warning">In Progress</span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=FF69B4&color=fff" class="avatar-sm me-2">
+                                                <span>Sarah J.</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ticket-meta">2 hours ago</div>
+                                        </td>
+                                        <td>
+                                            <a href="ticket-detail-email.html" class="btn btn-sm btn-outline-primary view-ticket"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="priority-medium">
+                                        <td class="border-end">#78900</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Maria+Garcia&background=00A86B&color=fff" class="avatar-sm me-2">
+                                                <div>
+                                                    <div class="fw-semibold">Maria Garcia</div>
+                                                    <div class="ticket-meta">maria.g@email.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold">Hotel booking modification request</div>
+                                            <div class="ticket-excerpt text-muted">Need to change my hotel booking dates from March 15-20 to March 16-21...</div>
+                                        </td>
+                                        <td>Hotel Booking</td>
+                                        <td>
+                                            <span class="badge channel-badge bg-primary">
+                                                <i class="fas fa-envelope me-1"></i>Email
+                                            </span>
+                                        </td>
+                                        <td class="border-start border-end"><span class="badge bg-warning">Medium</span></td>
+                                        <td><span class="badge bg-primary">Open</span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-muted">Unassigned</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ticket-meta">5 hours ago</div>
+                                        </td>
+                                        <td>
+                                            <a href="ticket-detail-email.html" class="btn btn-sm btn-outline-primary view-ticket"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Voice Call Tickets -->
+                                    <tr class="priority-high">
+                                        <td class="border-end">#78899</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Robert+Chen&background=8E44AD&color=fff" class="avatar-sm me-2">
+                                                <div>
+                                                    <div class="fw-semibold">Robert Chen</div>
+                                                    <div class="ticket-meta">+1-555-0123</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold">Lost luggage on flight DL789</div>
+                                            <div class="ticket-excerpt text-muted">Luggage not received at baggage claim. Flight DL789 from ATL to LAX...</div>
+                                        </td>
+                                        <td>Flight Booking</td>
+                                        <td>
+                                            <span class="badge channel-badge bg-success">
+                                                <i class="fas fa-phone-alt me-1"></i>Voice Call
+                                            </span>
+                                        </td>
+                                        <td class="border-start border-end"><span class="badge bg-danger">High</span></td>
+                                        <td><span class="badge bg-warning">In Progress</span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Mike+Chen&background=00A86B&color=fff" class="avatar-sm me-2">
+                                                <span>Mike C.</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ticket-meta">3 hours ago</div>
+                                        </td>
+                                        <td>
+                                            <a href="ticket-detail-voice.html" class="btn btn-sm btn-outline-primary view-ticket"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="priority-low">
+                                        <td class="border-end">#78898</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Sarah+Wilson&background=FF69B4&color=fff" class="avatar-sm me-2">
+                                                <div>
+                                                    <div class="fw-semibold">Sarah Wilson</div>
+                                                    <div class="ticket-meta">+1-555-0456</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold">Car rental upgrade inquiry</div>
+                                            <div class="ticket-excerpt text-muted">Interested in upgrading from compact to SUV for my upcoming rental...</div>
+                                        </td>
+                                        <td>Car Rental</td>
+                                        <td>
+                                            <span class="badge channel-badge bg-success">
+                                                <i class="fas fa-phone-alt me-1"></i>Voice Call
+                                            </span>
+                                        </td>
+                                        <td class="border-start border-end"><span class="badge bg-secondary">Low</span></td>
+                                        <td><span class="badge bg-success">Resolved</span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Emma+Davis&background=0D8ABC&color=fff" class="avatar-sm me-2">
+                                                <span>Emma D.</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ticket-meta">1 day ago</div>
+                                        </td>
+                                        <td>
+                                            <a href="ticket-detail-voice.html" class="btn btn-sm btn-outline-primary view-ticket"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+
+                                    <!-- More Email Tickets -->
+                                    <tr class="priority-medium">
+                                        <td class="border-end">#78897</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=David+Brown&background=8E44AD&color=fff" class="avatar-sm me-2">
+                                                <div>
+                                                    <div class="fw-semibold">David Brown</div>
+                                                    <div class="ticket-meta">david.b@email.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold">Seat selection not working</div>
+                                            <div class="ticket-excerpt text-muted">Unable to select seats for flight AA123. Error message appears...</div>
+                                        </td>
+                                        <td>Flight Booking</td>
+                                        <td>
+                                            <span class="badge channel-badge bg-primary">
+                                                <i class="fas fa-envelope me-1"></i>Email
+                                            </span>
+                                        </td>
+                                        <td class="border-start border-end"><span class="badge bg-warning">Medium</span></td>
+                                        <td><span class="badge bg-primary">Open</span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-muted">Unassigned</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ticket-meta">6 hours ago</div>
+                                        </td>
+                                        <td>
+                                            <a href="ticket-detail-email.html" class="btn btn-sm btn-outline-primary view-ticket"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+
+                                    <!-- More Voice Call Tickets -->
+                                    <tr class="priority-high">
+                                        <td class="border-end">#78896</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Lisa+Wang&background=00A86B&color=fff" class="avatar-sm me-2">
+                                                <div>
+                                                    <div class="fw-semibold">Lisa Wang</div>
+                                                    <div class="ticket-meta">+1-555-0789</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold">Emergency: Flight change due to medical emergency</div>
+                                            <div class="ticket-excerpt text-muted">Need to change flight due to family medical emergency. Urgent assistance required...</div>
+                                        </td>
+                                        <td>Flight Booking</td>
+                                        <td>
+                                            <span class="badge channel-badge bg-success">
+                                                <i class="fas fa-phone-alt me-1"></i>Voice Call
+                                            </span>
+                                        </td>
+                                        <td class="border-start border-end"><span class="badge bg-danger">High</span></td>
+                                        <td><span class="badge bg-warning">In Progress</span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Tom+Wilson&background=FF69B4&color=fff" class="avatar-sm me-2">
+                                                <span>Tom W.</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ticket-meta">4 hours ago</div>
+                                        </td>
+                                        <td>
+                                            <a href="ticket-detail-voice.html" class="btn btn-sm btn-outline-primary view-ticket"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="priority-medium">
+                                        <td class="border-end">#78895</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=James+Taylor&background=0D8ABC&color=fff" class="avatar-sm me-2">
+                                                <div>
+                                                    <div class="fw-semibold">James Taylor</div>
+                                                    <div class="ticket-meta">james.t@email.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold">Hotel breakfast inclusion question</div>
+                                            <div class="ticket-excerpt text-muted">Does my hotel booking include breakfast? Booking ref: HTL456789...</div>
+                                        </td>
+                                        <td>Hotel Booking</td>
+                                        <td>
+                                            <span class="badge channel-badge bg-primary">
+                                                <i class="fas fa-envelope me-1"></i>Email
+                                            </span>
+                                        </td>
+                                        <td class="border-start border-end"><span class="badge bg-warning">Medium</span></td>
+                                        <td><span class="badge bg-info">Under Review</span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Emma+Davis&background=0D8ABC&color=fff" class="avatar-sm me-2">
+                                                <span>Emma D.</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ticket-meta">2 days ago</div>
+                                        </td>
+                                        <td>
+                                            <a href="ticket-detail-email.html" class="btn btn-sm btn-outline-primary view-ticket"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="priority-low">
+                                        <td class="border-end">#78894</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Anna+Kowalski&background=8E44AD&color=fff" class="avatar-sm me-2">
+                                                <div>
+                                                    <div class="fw-semibold">Anna Kowalski</div>
+                                                    <div class="ticket-meta">+1-555-0321</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold">Car rental insurance inquiry</div>
+                                            <div class="ticket-excerpt text-muted">What types of insurance are available for my car rental in Miami?</div>
+                                        </td>
+                                        <td>Car Rental</td>
+                                        <td>
+                                            <span class="badge channel-badge bg-success">
+                                                <i class="fas fa-phone-alt me-1"></i>Voice Call
+                                            </span>
+                                        </td>
+                                        <td class="border-start border-end"><span class="badge bg-secondary">Low</span></td>
+                                        <td><span class="badge bg-success">Resolved</span></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=Mike+Chen&background=00A86B&color=fff" class="avatar-sm me-2">
+                                                <span>Mike C.</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="ticket-meta">1 day ago</div>
+                                        </td>
+                                        <td>
+                                            <a href="ticket-detail-voice.html" class="btn btn-sm btn-outline-primary view-ticket"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="newTcktModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create New Ticket</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createTicketForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Source</label>
+                                <select class="form-select" name="source" required>
+                                    <option value="">Select Source</option>
+                                    <option value="Email">Email</option>
+                                    <option value="Voice Call">Voice Call</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Category</label>
+                                <select class="form-select" name="category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Flight Booking">Flight Booking</option>
+                                    <option value="Hotel Booking">Hotel Booking</option>
+                                    <option value="Car Rental">Car Rental</option>
+                                    <option value="General Travel">General Travel</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium">Customer Email/Phone</label>
+                                <input type="text" class="form-control" name="customer" placeholder="Enter email or phone number" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium">Subject</label>
+                                <input type="text" class="form-control" name="subject" placeholder="Enter ticket subject" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium">Description</label>
+                                <textarea class="form-control" name="description" rows="4" placeholder="Enter ticket description" required></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Priority</label>
+                                <select class="form-select" name="priority" required>
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium">Assign to Agent</label>
+                                <select class="form-select" name="agent">
+                                    <option value="">Unassigned</option>
+                                    <option value="Sarah Johnson">Sarah Johnson</option>
+                                    <option value="Mike Chen">Mike Chen</option>
+                                    <option value="Emma Davis">Emma Davis</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitTicket">Create Ticket</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="assets/js/jquery-3.7.1.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <script src="assets/libs/datatable/datatables.min.js"></script>
+    <!-- Buttons Extension -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+    <!-- JSZip (Required for Excel Export) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- HTML5 Export Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Initialize DataTable
+            var table = $('#ticketsTable').DataTable({
+                //"pageLength": 10,
+                //"lengthMenu": [10, 25, 50, 100],
+                //"order": [[0, 'desc']],
+                paging: true,
+                lengthChange: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                autoWidth: false,
+                responsive: false,
+                scrollX: '100%',
+                order: [],
+                dom:
+                    "<'row gx-2 align-items-center mb-2' <'col'<'DtblTopCntrlInn'l>><'col-auto d-none'<'DtblTopCntrlInn'B>><'col-auto'<'DtblTopCntrlInn'f>><'col-auto'<'DtblTopCntrlInn'p>>>" +
+                    "<'bg-white rounded-2 overflow-hidden shadow-sm'<'row'<'col-12'tr>>>" +
+                    "<'row mt-2'<'col'i><'col-auto'p>>",
+                language: {
+                    lengthMenu: "Display _MENU_ ",
+                    searchPlaceholder: "Search ticket",
+                    search: "_INPUT_"
+                },
+            });
+
+            // Custom search for main search box
+            $('#searchInput').on('keyup', function () {
+                table.search(this.value).draw();
+            });
+
+            // Filter by status
+            $('#statusFilter').on('change', function () {
+                table.column(6).search(this.value).draw();
+            });
+
+            // Filter by priority
+            $('#priorityFilter').on('change', function () {
+                table.column(5).search(this.value).draw();
+            });
+
+            // Filter by source
+            $('#sourceFilter').on('change', function () {
+                table.column(4).search(this.value).draw();
+            });
+
+            // Filter by category
+            $('#categoryFilter').on('change', function () {
+                table.column(3).search(this.value).draw();
+            });
+
+            // Reset filters
+            $('#resetFilters').on('click', function () {
+                $('#searchInput').val('');
+                $('#statusFilter').val('');
+                $('#priorityFilter').val('');
+                $('#sourceFilter').val('');
+                $('#categoryFilter').val('');
+                table.search('').columns().search('').draw();
+            });
+
+            // View ticket
+            //$('tbody').on('click', '.view-ticket', function () {
+            //    const ticketId = $(this).data('id');
+            //    alert(`Viewing ticket #${ticketId}\n\nIn a real application, this would open the ticket details page.`);
+            //    // In real app: window.location.href = `/tickets/${ticketId}`;
+            //});
+
+            // Create ticket
+            $('#submitTicket').on('click', function () {
+                const form = $('#createTicketForm');
+                if (form[0].checkValidity()) {
+                    // In real app, this would submit via AJAX
+                    alert('Ticket created successfully!');
+                    $('#createTicketModal').modal('hide');
+                    form[0].reset();
+                    // Refresh table
+                    table.ajax.reload();
+                } else {
+                    form[0].reportValidity();
+                }
+            });
+
+            // Export tickets
+            $('#exportTickets').on('click', function () {
+                alert('Exporting tickets to CSV...');
+                // In real app, this would trigger download
+            });
+
+            // Refresh data
+            $('#refreshData').on('click', function () {
+                table.ajax.reload();
+                $(this).find('i').addClass('fa-spin');
+                setTimeout(() => {
+                    $(this).find('i').removeClass('fa-spin');
+                }, 1000);
+            });
+        });
+    </script>
+
+    <script>
+        const profileDropdownBtn = document.getElementById('profileBtn');
+        new bootstrap.Dropdown(profileDropdownBtn, {
+            popperConfig: {
+                modifiers: [{
+                    name: 'offset',
+                    options: {
+                        offset: [0, 8] // move down by 48px
+                    }
+                }]
+            }
+        });
+    </script>
+</body>
+</html>

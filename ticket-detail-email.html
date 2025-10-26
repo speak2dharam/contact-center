@@ -1,0 +1,1211 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI-Driven Contact-Center </title>
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+    <!--<link href="assets/css/icofont.css" rel="stylesheet" />-->
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/responsive.css" rel="stylesheet" />
+    <link href="assets/css/all.min.css" rel="stylesheet" />
+    <style>
+        .status-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .agent-transfer {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            padding: 40px 25px;
+            max-width: 300px;
+        }
+
+            .agent-transfer i {
+                font-size: 3rem;
+                color: #0056b3;
+                margin-bottom: 15px;
+            }
+
+        .ticket-card {
+            max-width: 600px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .ticket-header {
+            background-color: #a11212;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticket-body {
+            background-color: #fff;
+            padding: 25px;
+        }
+
+            .ticket-body h4 {
+                font-weight: 700;
+                margin-bottom: 15px;
+            }
+
+        .summary-box {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+            .summary-box .row + .row {
+                margin-top: 10px;
+            }
+
+        /*.email-thread {
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 20px;
+        }*/
+
+        .email-message {
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            background: white;
+            transition: all 0.3s;
+        }
+
+            .email-message:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                transform: translateY(-2px);
+            }
+
+        .email-header-message {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .email-body {
+            padding: 20px;
+        }
+
+        .email-attachments {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-top: 1px solid #e9ecef;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .ai-processing-banner {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .ai-suggestion {
+            background: #fff3cd;
+            border: 1px dashed #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .sentiment-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .sentiment-positive {
+            background-color: var(--bs-success);
+        }
+
+        .sentiment-negative {
+            background-color: var(--bs-danger);
+        }
+
+        .sentiment-neutral {
+            background-color: var(--bs-warning);
+        }
+
+        .file-attachment {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        .compact-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .quick-action-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+            .quick-action-btn:hover {
+                transform: translateY(-2px);
+            }
+
+        .ticket-meta {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .email-actions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 0 0 16px 16px;
+        }
+    </style>
+</head>
+<body>
+    <section class="topbar">
+        <div class="container-fluid">
+            <div class="row align-items-center gx-2">
+                <div class="col-auto d-block d-md-none d-lg-none">
+                    <a href="javascript:void()" id="toggleSidebar" class="text-white fs-5">
+                        <i class="fa-solid fa-bars"></i>
+                    </a>
+                </div>
+                <div class="col-auto">
+                    <div class="d-flex align-items-center">
+                        <img src="assets/img/svg/communication.svg" style="height:40px" />
+                        <span class="ms-2 fw-medium fs-6 text-white"> AI Contact Center </span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex justify-content-end">
+                        <div class="dropdown topDropdowns">
+                            <a class="" href="#" id="profileBtn" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span>
+                                    <i class="fa-regular fa-user"></i>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu bg-light shadow dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void()">
+                                        <i class="fa-regular fa-user"></i>
+                                        <span class="ms-2">demo@unifycloud.com</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="javascript:void()">
+                                        <i class="fa-solid fa-diamond-turn-right"></i>
+                                        <span class="ms-2">Go to Admin Panel</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="change-password.html">
+                                        <i class="fa-solid fa-key"></i>
+                                        <span class="ms-2">Change Password</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="login.html">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                        <span class="ms-2">Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="d-flex">
+        <nav id="sidebar" class="">
+            <div class="py-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <img src="assets/img/svg/bottom-view.svg" />
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="ticket-all.html" class="nav-link active">
+                            <img src="assets/img/svg/ticket.svg" />
+                            <span>Tickets</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="voice-call2.html" class="nav-link">
+                            <img src="assets/img/svg/telecommunication.svg" />
+                            <span>Voice Calls</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="quality-audit.html" class="nav-link">
+                            <img src="assets/img/svg/search.svg" />
+                            <span>Qulity Audit</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="agent-management.html" class="nav-link">
+                            <img src="assets/img/svg/ceo.svg" />
+                            <span>Agent Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <img src="assets/img/svg/pie-chart.svg" />
+                            <span>Security Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <img src="assets/img/svg/settings.svg" />
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <!--<li class="nav-item"><a class="nav-link d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse" href="#usersMenu" role="button" aria-expanded="false" aria-controls="usersMenu"><span><i class="fa-solid fa-users"></i> Users</span><i class="fa-solid fa-chevron-down"></i></a><div class="collapse submenu" id="usersMenu"><ul class="nav flex-column"><li><a href="#" class="nav-link"><i class="fa-solid fa-user-plus"></i> Add User</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-user-gear"></i> Manage Users</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-user-shield"></i> User Roles</a></li></ul></div></li><li class="nav-item"><a class="nav-link d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse" href="#settingsMenu" role="button" aria-expanded="false" aria-controls="settingsMenu"><span><i class="fa-solid fa-gear"></i> Settings</span><i class="fa-solid fa-chevron-down"></i></a><div class="collapse submenu" id="settingsMenu"><ul class="nav flex-column"><li><a href="#" class="nav-link"><i class="fa-solid fa-sliders"></i> General</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-lock"></i> Security</a></li><li><a href="#" class="nav-link"><i class="fa-solid fa-bell"></i> Notifications</a></li></ul></div></li>-->
+                </ul>
+            </div>
+        </nav>
+        <div id="content" class="flex-grow-1">
+            <!--<button id="toggleSidebar" class="btn btn-primary mb-3"><i class="bi bi-list"></i> Toggle Sidebar
+                </button>-->
+            <div class="px-4 py-2 border-bottom">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">Ticket Detail</h5>
+                    </div>
+                    <div class="col">
+                        <div class="d-flex justify-content-end">
+                            <a href="ticket-all.html" class="btn btn-outline-dark btn-sm"><i class="fa-solid fa-arrow-left"></i> Back to all ticket</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-4 my-4">
+                <div class="row g-3">
+                    
+                    <div class="col-md">
+                        <div class="">
+
+                            <div class="bg-white shadow rounded-3 overflow-hidden">
+                                <div class="bg-dark bg-gradient p-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-md">
+                                            <h3 class="mb-2 fs-5 text-white">#78901 - Flight Cancellation - Need Rebooking</h3>
+                                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                                <span class="badge bg-light text-dark">
+                                                    <i class="fas fa-envelope me-1"></i>Email Ticket
+                                                </span>
+                                                <span class="badge bg-warning">High Priority</span>
+                                                <span class="badge bg-light text-dark">In Progress</span>
+                                                <span class="badge bg-info">Flight Booking</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-auto d-flex justify-content-end">
+                                            <div class="text-light text-end">
+                                                <div>Created: 2 hours ago</div>
+                                                <div>Last Updated: 15 minutes ago</div>
+                                                <div>Assigned to: Sarah Johnson</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="nav nav-tabs px-3 pt-2 bg-dark bg-opacity-25" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active text-dark" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+                                            <i class="fas fa-comments me-2"></i>Conversation
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link text-dark" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+                                            <i class="fas fa-info-circle me-2"></i>Ticket Details
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link text-dark" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">
+                                            <i class="fas fa-robot me-2"></i>AI Processing
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link text-dark" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" role="tab" aria-controls="disabled-tab-pane" aria-selected="false">
+                                            <i class="fas fa-paperclip me-2"></i>Attachments
+                                        </button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                                        <div class="card-body p-3">
+                                            <div class="email-thread">
+                                                <!-- Original Customer Email -->
+                                                <div class="email-message">
+                                                    <div class="email-header-message">
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="d-flex align-items-center mb-2">
+                                                                    <img src="https://ui-avatars.com/api/?name=John+Smith&background=0D8ABC&color=fff" class="avatar-sm me-2">
+                                                                    <div>
+                                                                        <strong>John Smith</strong>
+                                                                        <div class="ticket-meta">john.smith@email.com</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="ticket-meta">
+                                                                    <strong>To:</strong> support@travelcompany.com<br>
+                                                                    <strong>Subject:</strong> Urgent: Flight cancellation - need rebooking<br>
+                                                                    <strong>Date:</strong> Today, 10:15 AM
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 text-md-end">
+                                                                <div class="ticket-meta">
+                                                                    <span class="sentiment-indicator sentiment-negative"></span>
+                                                                    Sentiment: Frustrated
+                                                                </div>
+                                                                <button class="btn btn-sm btn-outline-primary mt-2">
+                                                                    <i class="fas fa-reply me-1"></i>Reply
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="email-body">
+                                                        <p>Dear Support Team,</p>
+
+                                                        <p>I'm writing to request urgent assistance with a flight cancellation. My flight BA245 from London Heathrow (LHR) to New York JFK scheduled for tomorrow at 2:00 PM has been cancelled due to technical issues.</p>
+
+                                                        <p>I have an important business meeting in New York and absolutely need to be rebooked on the next available flight. I was traveling in Business Class and would prefer to maintain the same class if possible.</p>
+
+                                                        <p>
+                                                            <strong>Booking Details:</strong><br>
+                                                            - Booking Reference: BA7890123<br>
+                                                            - Flight: BA245 LHR → JFK<br>
+                                                            - Date: March 15, 2024<br>
+                                                            - Time: 2:00 PM<br>
+                                                            - Class: Business<br>
+                                                            - Seat: 4A
+                                                        </p>
+
+                                                        <p>Please find my booking confirmation and passport copy attached for verification.</p>
+
+                                                        <p>I would appreciate your immediate attention to this matter as time is critical.</p>
+
+                                                        <p>
+                                                            Thank you,<br>
+                                                            John Smith<br>
+                                                            <span class="ticket-meta">VIP Customer - Gold Status</span>
+                                                        </p>
+                                                    </div>
+
+                                                    <div class="email-attachments">
+                                                        <h6><i class="fas fa-paperclip me-2"></i>Attachments (2)</h6>
+                                                        <div class="file-attachment">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <div>
+                                                                    <i class="fas fa-file-pdf text-danger me-2"></i>
+                                                                    <strong>booking_confirmation.pdf</strong>
+                                                                    <div class="ticket-meta">245 KB</div>
+                                                                </div>
+                                                                <div>
+                                                                    <button class="btn btn-sm btn-outline-primary me-1">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-outline-secondary">
+                                                                        <i class="fas fa-download"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="file-attachment">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <div>
+                                                                    <i class="fas fa-file-image text-success me-2"></i>
+                                                                    <strong>passport_copy.jpg</strong>
+                                                                    <div class="ticket-meta">1.2 MB</div>
+                                                                </div>
+                                                                <div>
+                                                                    <button class="btn btn-sm btn-outline-primary me-1">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-outline-secondary">
+                                                                        <i class="fas fa-download"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- AI Processing Banner -->
+                                                <div class="ai-processing-banner">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-robot fa-lg me-3"></i>
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="mb-1">AI Processing Email</h6>
+                                                            <p class="mb-0">Analyzing customer request and generating response...</p>
+                                                        </div>
+                                                        <div class="spinner-border spinner-border-sm" role="status">
+                                                            <span class="visually-hidden">Loading...</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- AI Analysis -->
+                                                <div class="ai-suggestion">
+                                                    <div class="d-flex align-items-start">
+                                                        <i class="fas fa-brain text-info me-3 mt-1"></i>
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="mb-2">AI Analysis Results</h6>
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <strong>Classification:</strong> Flight Booking - Rebooking Request<br>
+                                                                    <strong>Priority:</strong> High (Time-sensitive)<br>
+                                                                    <strong>Sentiment:</strong> Frustrated (85%)<br>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <strong>Customer Tier:</strong> VIP (Gold Status)<br>
+                                                                    <strong>Urgency:</strong> Critical (Business meeting)<br>
+                                                                    <strong>Confidence:</strong> 94%
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- AI Response Email -->
+                                                <div class="email-message">
+                                                    <div class="email-header-message">
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="d-flex align-items-center mb-2">
+                                                                    <img src="https://ui-avatars.com/api/?name=AI+Assistant&background=00A86B&color=fff" class="avatar-sm me-2">
+                                                                    <div>
+                                                                        <strong>AI Assistant</strong>
+                                                                        <div class="ticket-meta">support@travelcompany.com • AI Generated</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="ticket-meta">
+                                                                    <strong>To:</strong> john.smith@email.com<br>
+                                                                    <strong>Subject:</strong> Re: Urgent: Flight cancellation - need rebooking<br>
+                                                                    <strong>Date:</strong> Today, 10:16 AM
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 text-md-end">
+                                                                <div class="ticket-meta">
+                                                                    <span class="badge bg-success compact-badge">AI Generated</span><br>
+                                                                    <span class="badge bg-info compact-badge">Confidence: 94%</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="email-body">
+                                                        <p>Dear John,</p>
+
+                                                        <p>Thank you for contacting us regarding your cancelled flight BA245. I understand the urgency of your situation and the importance of your business meeting in New York.</p>
+
+                                                        <p>I've immediately looked into alternative flight options for you and found the following available solutions:</p>
+
+                                                        <div class="alert alert-info">
+                                                            <h6><i class="fas fa-plane me-2"></i>Recommended Alternative:</h6>
+                                                            <strong>Flight BA247</strong><br>
+                                                            <strong>Route:</strong> London Heathrow (LHR) → New York JFK<br>
+                                                            <strong>Date:</strong> March 15, 2024<br>
+                                                            <strong>Time:</strong> 4:30 PM (Departure)<br>
+                                                            <strong>Class:</strong> Business Class Available<br>
+                                                            <strong>Duration:</strong> 8h 15m<br>
+                                                            <strong>Status:</strong> Confirmed Available
+                                                        </div>
+
+                                                        <div class="alert alert-secondary">
+                                                            <h6><i class="fas fa-plane me-2"></i>Secondary Option:</h6>
+                                                            <strong>Flight VS137</strong><br>
+                                                            <strong>Route:</strong> London Heathrow (LHR) → New York JFK<br>
+                                                            <strong>Date:</strong> March 15, 2024<br>
+                                                            <strong>Time:</strong> 6:15 PM (Departure)<br>
+                                                            <strong>Class:</strong> Premium Economy Available<br>
+                                                            <strong>Duration:</strong> 8h 05m
+                                                        </div>
+
+                                                        <p>I recommend <strong>Option 1 (BA247 at 4:30 PM)</strong> as it maintains your Business Class preference and gets you to New York with minimal delay to your schedule.</p>
+
+                                                        <p>Your connecting transportation in New York and any other linked arrangements will be automatically updated with the new flight details.</p>
+
+                                                        <p>Please reply to this email confirming your preference, and I'll proceed with the rebooking immediately.</p>
+
+                                                        <p>
+                                                            Best regards,<br>
+                                                            <strong>AI Assistant</strong><br>
+                                                            Customer Support Team<br>
+                                                            TravelCompany
+                                                        </p>
+
+                                                        <div class="ticket-meta border-top pt-2 mt-3">
+                                                            <i class="fas fa-shield-alt me-1 text-success"></i>
+                                                            This response was AI-generated and reviewed for accuracy
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Customer Reply -->
+                                                <div class="email-message">
+                                                    <div class="email-header-message">
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="d-flex align-items-center mb-2">
+                                                                    <img src="https://ui-avatars.com/api/?name=John+Smith&background=0D8ABC&color=fff" class="avatar-sm me-2">
+                                                                    <div>
+                                                                        <strong>John Smith</strong>
+                                                                        <div class="ticket-meta">john.smith@email.com</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="ticket-meta">
+                                                                    <strong>To:</strong> support@travelcompany.com<br>
+                                                                    <strong>Subject:</strong> Re: Urgent: Flight cancellation - need rebooking<br>
+                                                                    <strong>Date:</strong> Today, 10:45 AM
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 text-md-end">
+                                                                <div class="ticket-meta">
+                                                                    <span class="sentiment-indicator sentiment-neutral"></span>
+                                                                    Sentiment: Satisfied
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="email-body">
+                                                        <p>Thank you for the quick response and the alternative options.</p>
+
+                                                        <p>I'll take <strong>Option 1 (BA247 at 4:30 PM in Business Class)</strong>. Please proceed with the rebooking.</p>
+
+                                                        <p>Could you also ensure that my lounge access is transferred to the new booking? My frequent flyer number is <strong>BA123456789</strong>.</p>
+
+                                                        <p>Please send the updated itinerary and e-ticket to this email address as soon as the rebooking is complete.</p>
+
+                                                        <p>Thank you for your assistance.</p>
+
+                                                        <p>
+                                                            Best regards,<br>
+                                                            John Smith
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <!-- AI Processing Follow-up -->
+                                                <div class="ai-processing-banner">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-robot fa-lg me-3"></i>
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="mb-1">AI Processing Follow-up Request</h6>
+                                                            <p class="mb-0">Processing rebooking confirmation and additional requests...</p>
+                                                        </div>
+                                                        <div class="spinner-border spinner-border-sm" role="status">
+                                                            <span class="visually-hidden">Loading...</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Current AI Response (Ready to Send) -->
+                                                <div class="email-message border-primary">
+                                                    <div class="email-header-message bg-primary text-white">
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="d-flex align-items-center mb-2">
+                                                                    <img src="https://ui-avatars.com/api/?name=AI+Assistant&background=ffffff&color=0D8ABC" class="avatar-sm me-2">
+                                                                    <div>
+                                                                        <strong>AI Assistant</strong>
+                                                                        <div class="text-light">support@travelcompany.com • Ready to Send</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="text-light">
+                                                                    <strong>To:</strong> john.smith@email.com<br>
+                                                                    <strong>Subject:</strong> Re: Urgent: Flight cancellation - need rebooking<br>
+                                                                    <strong>Date:</strong> Ready to send
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 text-md-end">
+                                                                <div class="text-light">
+                                                                    <span class="badge bg-light text-primary compact-badge">AI Generated</span><br>
+                                                                    <span class="badge bg-success compact-badge">Confidence: 96%</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="email-body">
+                                                        <p>Dear John,</p>
+
+                                                        <p>Perfect! I've successfully rebooked you on <strong>BA247 departing at 4:30 PM in Business Class</strong>.</p>
+
+                                                        <div class="alert alert-success">
+                                                            <h6><i class="fas fa-check-circle me-2"></i>Rebooking Confirmed</h6>
+                                                            <strong>New Booking Reference:</strong> BA7890456<br>
+                                                            <strong>Flight:</strong> BA247 LHR → JFK<br>
+                                                            <strong>Date:</strong> March 15, 2024<br>
+                                                            <strong>Time:</strong> 4:30 PM (Departure)<br>
+                                                            <strong>Class:</strong> Business<br>
+                                                            <strong>Seat:</strong> To be assigned at check-in
+                                                        </div>
+
+                                                        <p>I've confirmed your lounge access and added your frequent flyer number (<strong>BA123456789</strong>) to the booking. Your Gold Status benefits remain active.</p>
+
+                                                        <p>The updated e-ticket and detailed itinerary have been sent to your email. You'll also receive SMS notifications regarding any updates.</p>
+
+                                                        <p>Your original payment has been transferred to the new booking, and no additional action is required from your side.</p>
+
+                                                        <p>Is there anything else I can assist you with regarding your travel arrangements to New York?</p>
+
+                                                        <p>
+                                                            Safe travels,<br>
+                                                            <strong>AI Assistant</strong><br>
+                                                            Customer Support Team<br>
+                                                            TravelCompany
+                                                        </p>
+
+                                                        <div class="mt-3">
+                                                            <div class="file-attachment">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <div>
+                                                                        <i class="fas fa-file-pdf text-danger me-2"></i>
+                                                                        <strong>updated_itinerary.pdf</strong>
+                                                                        <div class="ticket-meta">180 KB • Generated</div>
+                                                                    </div>
+                                                                    <div>
+                                                                        <button class="btn btn-sm btn-outline-primary me-1">
+                                                                            <i class="fas fa-eye"></i>
+                                                                        </button>
+                                                                        <button class="btn btn-sm btn-outline-secondary">
+                                                                            <i class="fas fa-download"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <div class="conversation-timeline mb-4">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+
+                                            <!-- Conversation Timeline -->
+                                           
+
+                                            <!-- AI Processing for Follow-up -->
+                                            <div class="mb-4">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <h6 class="section-title mb-0">AI Processing - Follow-up</h6>
+                                                    <div>
+                                                        <button id="process-followup" class="btn btn-primary btn-sm">
+                                                            <i class="fas fa-robot me-1"></i>Process Follow-up
+                                                        </button>
+                                                        <button id="process-followup2" class="btn btn-warning btn-sm">
+                                                            <i class="fas fa-robot me-1"></i>Process Follow-up for failed
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div id="followup-workflow">
+                                                    <div class="agent-process" data-agent="context">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-sync-alt text-warning me-2"></i>
+                                                            <div class="flex-grow-1">
+                                                                <small class="fw-bold">Context Analysis</small>
+                                                                <div class="ticket-meta">Reviewing previous interactions</div>
+                                                            </div>
+                                                            <span class="badge bg-secondary compact-badge">Pending</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="agent-process" data-agent="diagnosis">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-stethoscope text-info me-2"></i>
+                                                            <div class="flex-grow-1">
+                                                                <small class="fw-bold">Advanced Diagnosis</small>
+                                                                <div class="ticket-meta">Analyzing crash patterns</div>
+                                                            </div>
+                                                            <span class="badge bg-secondary compact-badge">Pending</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="agent-process" data-agent="solution">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                                                            <div class="flex-grow-1">
+                                                                <small class="fw-bold">Solution Generation</small>
+                                                                <div class="ticket-meta">Creating alternative solution</div>
+                                                            </div>
+                                                            <span class="badge bg-secondary compact-badge">Pending</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- New AI Response -->
+                                            <div id="followup-response" style="display: none;">
+                                                <h6 class="section-title">AI Response to Follow-up</h6>
+                                                <div class="ai-response-box mb-3">
+                                                    <p class="mb-0">Need any other help?</p>
+
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <button class="btn btn-success btn-sm">
+                                                        <i class="fas fa-paper-plane me-1"></i>Send Response
+                                                    </button>
+                                                    <button class="btn btn-outline-primary btn-sm">
+                                                        <i class="fas fa-edit me-1"></i>Modify
+                                                    </button>
+                                                    <button class="btn btn-outline-warning btn-sm">
+                                                        <i class="fas fa-phone me-1"></i>Call Customer
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Quick Actions -->
+                                            <div class="border-top pt-3">
+                                                <h6 class="section-title">Quick Actions</h6>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <button class="btn btn-outline-primary quick-action-btn">
+                                                        <i class="fas fa-comment me-1"></i>Add Note
+                                                    </button>
+                                                    <button class="btn btn-outline-secondary quick-action-btn">
+                                                        <i class="fas fa-user me-1"></i>Assign to Me
+                                                    </button>
+                                                    <button class="btn btn-outline-warning quick-action-btn">
+                                                        <i class="fas fa-flag me-1"></i>Escalate
+                                                    </button>
+                                                    <button class="btn btn-outline-success quick-action-btn">
+                                                        <i class="fas fa-check me-1"></i>Resolve
+                                                    </button>
+                                                    <button class="btn btn-outline-info quick-action-btn">
+                                                        <i class="fas fa-history me-1"></i>View History
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                                        <div class="p-3">
+                                            <div class="row mt-4">
+                                                <div class="col-md-6">
+                                                    <div class="customer-info-card mb-4">
+                                                        <h6 class="section-title">Customer Information</h6>
+                                                        <div class="d-flex align-items-center mb-3">
+                                                            <img src="https://ui-avatars.com/api/?name=John+Smith&background=0D8ABC&color=fff" class="avatar-md me-3">
+                                                            <div>
+                                                                <h5 class="mb-1">John Smith</h5>
+                                                                <p class="text-muted mb-1">VIP Customer • 5+ bookings</p>
+                                                                <div class="ticket-meta">
+                                                                    <span class="sentiment-indicator sentiment-neutral"></span>
+                                                                    Current sentiment: Satisfied
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-12 mb-2">
+                                                                <i class="fas fa-envelope me-2 text-muted"></i>
+                                                                john.smith@email.com
+                                                            </div>
+                                                            <div class="col-12 mb-2">
+                                                                <i class="fas fa-phone me-2 text-muted"></i>
+                                                                +1-555-0123
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <i class="fas fa-map-marker-alt me-2 text-muted"></i>
+                                                                London, UK
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="glass-card">
+                                                        <div class="card-body p-3">
+                                                            <h6 class="section-title">Booking Details</h6>
+                                                            <div class="mb-3">
+                                                                <strong>Original Flight:</strong><br>
+                                                                BA245 • LHR → JFK<br>
+                                                                March 15, 2024 • 2:00 PM<br>
+                                                                Business Class • Seat 4A
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <strong>New Flight:</strong><br>
+                                                                BA247 • LHR → JFK<br>
+                                                                March 15, 2024 • 4:30 PM<br>
+                                                                Business Class • Seat to be assigned
+                                                            </div>
+                                                            <div>
+                                                                <strong>Frequent Flyer:</strong> BA123456789 (Gold Status)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="glass-card mb-4">
+                                                        <div class="card-body p-3">
+                                                            <h6 class="section-title">Ticket Information</h6>
+                                                            <div class="row mb-3">
+                                                                <div class="col-6">
+                                                                    <small class="text-muted">Ticket ID</small>
+                                                                    <div class="fw-semibold">#78901</div>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <small class="text-muted">Source</small>
+                                                                    <div class="fw-semibold">
+                                                                        <i class="fas fa-envelope me-1 text-primary"></i>Email
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3">
+                                                                <div class="col-6">
+                                                                    <small class="text-muted">Category</small>
+                                                                    <div class="fw-semibold">Flight Booking</div>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <small class="text-muted">Priority</small>
+                                                                    <div>
+                                                                        <span class="badge bg-danger">High</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3">
+                                                                <div class="col-6">
+                                                                    <small class="text-muted">Status</small>
+                                                                    <div>
+                                                                        <span class="badge bg-warning">In Progress</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <small class="text-muted">SLA</small>
+                                                                    <div class="fw-semibold text-success">Within SLA</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-6">
+                                                                    <small class="text-muted">Created</small>
+                                                                    <div class="fw-semibold">2 hours ago</div>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <small class="text-muted">Last Updated</small>
+                                                                    <div class="fw-semibold">15 minutes ago</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="glass-card">
+                                                        <div class="card-body p-3">
+                                                            <h6 class="section-title">Assigned Agent</h6>
+                                                            <div class="d-flex align-items-center mb-3">
+                                                                <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=FF69B4&color=fff" class="avatar-md me-3">
+                                                                <div>
+                                                                    <h6 class="mb-1">Sarah Johnson</h6>
+                                                                    <p class="text-muted mb-1">Senior Support Agent</p>
+                                                                    <div class="ticket-meta">
+                                                                        <span class="badge bg-success compact-badge">Available</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <i class="fas fa-phone me-2 text-muted"></i>
+                                                                Ext. 234
+                                                            </div>
+                                                            <div class="mb-2">
+                                                                <i class="fas fa-envelope me-2 text-muted"></i>
+                                                                sarah.j@company.com
+                                                            </div>
+                                                            <button class="btn btn-outline-primary btn-sm w-100 mt-2">
+                                                                <i class="fas fa-comment me-1"></i>Send Message
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
+                                        <div class="p-3">
+                                            <div class="row mt-4">
+                                                <div class="col-md-8">
+                                                    <h6 class="section-title">AI Processing Workflow</h6>
+
+                                                    <div class="ai-processing mb-4">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-brain text-info me-3 fa-lg"></i>
+                                                            <div>
+                                                                <h6 class="mb-1">Multi-Agent AI Processing</h6>
+                                                                <p class="mb-0">Coordinated via AutoGen on Azure Functions</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="agent-workflow">
+                                                        <div class="agent-process completed">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="fas fa-tag text-primary me-3"></i>
+                                                                <div class="flex-grow-1">
+                                                                    <h6 class="mb-1">Classification Agent</h6>
+                                                                    <p class="mb-0 small">Identified as: Flight Booking • High Priority • Urgent Rebooking</p>
+                                                                </div>
+                                                                <span class="badge bg-success">Completed</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="agent-process completed">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="fas fa-heart text-danger me-3"></i>
+                                                                <div class="flex-grow-1">
+                                                                    <h6 class="mb-1">Sentiment Analysis Agent</h6>
+                                                                    <p class="mb-0 small">Initial: Frustrated (85%) • Current: Satisfied (72%)</p>
+                                                                </div>
+                                                                <span class="badge bg-success">Completed</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="agent-process completed">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="fas fa-file-alt text-success me-3"></i>
+                                                                <div class="flex-grow-1">
+                                                                    <h6 class="mb-1">Content Extraction Agent</h6>
+                                                                    <p class="mb-0 small">Extracted: Flight BA245, LHR→JFK, Business Class, Time-sensitive</p>
+                                                                </div>
+                                                                <span class="badge bg-success">Completed</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="agent-process completed">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="fas fa-search text-warning me-3"></i>
+                                                                <div class="flex-grow-1">
+                                                                    <h6 class="mb-1">Knowledge Retrieval Agent</h6>
+                                                                    <p class="mb-0 small">Found: Alternative flights, Rebooking policies, Lounge access rules</p>
+                                                                </div>
+                                                                <span class="badge bg-success">Completed</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="agent-process active">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="fas fa-plane text-info me-3"></i>
+                                                                <div class="flex-grow-1">
+                                                                    <h6 class="mb-1">Booking Agent</h6>
+                                                                    <p class="mb-0 small">Processing: Rebooking to BA247, Seat assignment, Frequent flyer update</p>
+                                                                </div>
+                                                                <span class="badge bg-warning">Processing</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mt-4">
+                                                        <h6 class="section-title">AI Confidence Metrics</h6>
+                                                        <div class="row text-center">
+                                                            <div class="col-4">
+                                                                <div class="display-6 text-primary">94%</div>
+                                                                <small class="text-muted">Classification Accuracy</small>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="display-6 text-success">96%</div>
+                                                                <small class="text-muted">Response Quality</small>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="display-6 text-info">89%</div>
+                                                                <small class="text-muted">Solution Accuracy</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="bg-white shadow p-3 rounded-3 overflow-hidden">
+                                                        <div class="">
+                                                            <h6 class="section-title">AI Suggestions</h6>
+                                                            <div class="ai-suggestion p-3 mb-3">
+                                                                <h6><i class="fas fa-lightbulb text-warning me-2"></i>Upsell Opportunity</h6>
+                                                                <p class="small mb-0">Customer is Business Class traveler. Suggest airport transfer service or hotel package.</p>
+                                                            </div>
+
+                                                            <div class="ai-suggestion p-3 mb-3">
+                                                                <h6><i class="fas fa-shield-alt text-success me-2"></i>Compliance Check</h6>
+                                                                <p class="small mb-0">All rebooking procedures compliant with airline policies and regulations.</p>
+                                                            </div>
+
+                                                            <div class="ai-suggestion p-3">
+                                                                <h6><i class="fas fa-clock text-info me-2"></i>Next Best Action</h6>
+                                                                <p class="small mb-0">Send updated itinerary and confirm all special requests have been processed.</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="disabled-tab-pane" role="tabpanel" aria-labelledby="disabled-tab" tabindex="0">
+                                        <div class="p-3">
+                                            <div class="row mt-4">
+                                                <div class="col-md-6">
+                                                    <h6 class="section-title">Email Attachments</h6>
+                                                    <div class="file-attachment">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <i class="fas fa-file-pdf text-danger me-2"></i>
+                                                                <strong>booking_confirmation.pdf</strong>
+                                                                <div class="ticket-meta">245 KB • Added 2 hours ago</div>
+                                                            </div>
+                                                            <div>
+                                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </button>
+                                                                <button class="btn btn-sm btn-outline-secondary">
+                                                                    <i class="fas fa-download"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="file-attachment">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <i class="fas fa-file-image text-success me-2"></i>
+                                                                <strong>passport_copy.jpg</strong>
+                                                                <div class="ticket-meta">1.2 MB • Added 2 hours ago</div>
+                                                            </div>
+                                                            <div>
+                                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </button>
+                                                                <button class="btn btn-sm btn-outline-secondary">
+                                                                    <i class="fas fa-download"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <h6 class="section-title">Generated Documents</h6>
+                                                    <div class="file-attachment">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <i class="fas fa-file-pdf text-danger me-2"></i>
+                                                                <strong>updated_itinerary.pdf</strong>
+                                                                <div class="ticket-meta">180 KB • Generated 15 minutes ago</div>
+                                                            </div>
+                                                            <div>
+                                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </button>
+                                                                <button class="btn btn-sm btn-outline-secondary">
+                                                                    <i class="fas fa-download"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="file-attachment">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <i class="fas fa-file-alt text-primary me-2"></i>
+                                                                <strong>rebooking_confirmation.txt</strong>
+                                                                <div class="ticket-meta">45 KB • Generated 10 minutes ago</div>
+                                                            </div>
+                                                            <div>
+                                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </button>
+                                                                <button class="btn btn-sm btn-outline-secondary">
+                                                                    <i class="fas fa-download"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="newTcktModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="assets/js/jquery-3.7.1.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/ticket.js?v1.1"></script>
+    <script>
+        const profileDropdownBtn = document.getElementById('profileBtn');
+        new bootstrap.Dropdown(profileDropdownBtn, {
+            popperConfig: {
+                modifiers: [{
+                    name: 'offset',
+                    options: {
+                        offset: [0, 8] // move down by 48px
+                    }
+                }]
+            }
+        });
+    </script>
+</body>
+</html>
